@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Deck Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-magic"></i> MTG Deck Builder</h1>
+                <div class="deck-controls">
+                    <select id="deck-selector" class="deck-selector">
+                        <option value="default">Deck Principal</option>
+                    </select>
+                    <button id="new-deck-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Novo Deck
+                    </button>
+                    <button id="export-deck-btn" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Buscar cartas..." class="search-input">
+                        <button id="search-btn" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Advanced Filters -->
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="type-filter">Tipo:</label>
+                            <select id="type-filter" class="filter-select">
+                                <option value="">Todos</option>
+                                <option value="creature">Criatura</option>
+                                <option value="land">Terreno</option>
+                                <option value="instant">Instantâneo</option>
+                                <option value="sorcery">Feitiço</option>
+                                <option value="enchantment">Encantamento</option>
+                                <option value="artifact">Artefato</option>
+                                <option value="planeswalker">Planeswalker</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="color-filter">Cor:</label>
+                            <select id="color-filter" class="filter-select">
+                                <option value="">Todas</option>
+                                <option value="w">Branco</option>
+                                <option value="u">Azul</option>
+                                <option value="b">Preto</option>
+                                <option value="r">Vermelho</option>
+                                <option value="g">Verde</option>
+                                <option value="c">Incolor</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="cmc-filter">CMC:</label>
+                            <select id="cmc-filter" class="filter-select">
+                                <option value="">Todos</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6+">6+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="rarity-filter">Raridade:</label>
+                            <select id="rarity-filter" class="filter-select">
+                                <option value="">Todas</option>
+                                <option value="common">Comum</option>
+                                <option value="uncommon">Incomum</option>
+                                <option value="rare">Rara</option>
+                                <option value="mythic">Mítica</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="keyword-filter">Palavra-chave:</label>
+                            <select id="keyword-filter" class="filter-select">
+                                <option value="">Nenhuma</option>
+                                <option value="flying">Flying</option>
+                                <option value="trample">Trample</option>
+                                <option value="deathtouch">Deathtouch</option>
+                                <option value="first-strike">First Strike</option>
+                                <option value="double-strike">Double Strike</option>
+                                <option value="haste">Haste</option>
+                                <option value="lifelink">Lifelink</option>
+                                <option value="vigilance">Vigilance</option>
+                                <option value="menace">Menace</option>
+                                <option value="hexproof">Hexproof</option>
+                                <option value="reach">Reach</option>
+                                <option value="flash">Flash</option>
+                                <option value="indestructible">Indestructible</option>
+                                <option value="protection">Protection</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="format-filter">Formato:</label>
+                            <select id="format-filter" class="filter-select">
+                                <option value="">Todos</option>
+                                <option value="standard">Standard</option>
+                                <option value="pioneer">Pioneer</option>
+                                <option value="modern">Modern</option>
+                                <option value="legacy">Legacy</option>
+                                <option value="vintage">Vintage</option>
+                                <option value="commander">Commander</option>
+                                <option value="pauper">Pauper</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>
+                                <input type="checkbox" id="legendary-filter">
+                                Apenas Lendárias
+                            </label>
+                        </div>
+                        
+                        <button id="clear-filters-btn" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Limpar Filtros
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Search Results -->
+                <section class="search-results-section">
+                    <h2>Resultados da Busca</h2>
+                    <div id="loading" class="loading hidden">
+                        <i class="fas fa-spinner fa-spin"></i> Carregando...
+                    </div>
+                    <div id="search-results" class="cards-grid">
+                        <!-- Cards will be inserted here -->
+                    </div>
+                    <div id="no-results" class="no-results hidden">
+                        <i class="fas fa-search"></i>
+                        <p>Nenhuma carta encontrada. Tente ajustar os filtros.</p>
+                    </div>
+                </section>
+
+                <!-- Deck Section -->
+                <section class="deck-section">
+                    <div class="deck-header">
+                        <h2>Meu Deck (<span id="deck-count">0</span> cartas)</h2>
+                        <div class="deck-actions">
+                            <button id="shuffle-btn" class="btn btn-secondary">
+                                <i class="fas fa-random"></i> Embaralhar
+                            </button>
+                            <button id="simulate-hand-btn" class="btn btn-secondary">
+                                <i class="fas fa-hand-paper"></i> Simular Mão
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="deck-cards" class="deck-cards">
+                        <div class="empty-deck">
+                            <i class="fas fa-plus-circle"></i>
+                            <p>Adicione cartas ao seu deck para começar</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Statistics Panel -->
+            <section class="stats-section">
+                <h2>Estatísticas do Deck</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Curva de Mana</h3>
+                        <canvas id="mana-curve-chart"></canvas>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Distribuição de Cores</h3>
+                        <canvas id="color-distribution-chart"></canvas>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Tipos de Carta</h3>
+                        <canvas id="type-distribution-chart"></canvas>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Informações Gerais</h3>
+                        <div id="general-stats" class="general-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">CMC Médio:</span>
+                                <span id="avg-cmc" class="stat-value">0.0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total de Cartas:</span>
+                                <span id="total-cards" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Terrenos:</span>
+                                <span id="land-count" class="stat-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Card Preview Modal -->
+        <div id="card-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-card-content"></div>
+            </div>
+        </div>
+
+        <!-- Simulate Hand Modal -->
+        <div id="hand-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Mão Simulada (7 cartas)</h3>
+                <div id="hand-cards" class="hand-cards"></div>
+                <button id="draw-new-hand" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Nova Mão
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Imagens e dados de cartas fornecidos por <a href="https://scryfall.com" target="_blank">Scryfall</a></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
