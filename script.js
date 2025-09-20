@@ -18,6 +18,8 @@ class MTGDeckBuilder {
         this.updateFiltersCount();
         this.toggleSubtypeFilter(); // Initialize subtype filter state
         this.toggleLandSubtypeFilter(); // Initialize land subtype filter state
+        this.toggleSpellEffectFilter(); // Initialize spell effect filter state
+        this.toggleArtifactSubtypeFilter(); // Initialize artifact subtype filter state
         this.toggleColorFilter(); // Initialize color filter state
         this.updateSearchPlaceholder(); // Initialize search placeholder
     }
@@ -39,6 +41,8 @@ class MTGDeckBuilder {
         document.getElementById('type-filter').addEventListener('change', () => {
             this.toggleSubtypeFilter();
             this.toggleLandSubtypeFilter();
+            this.toggleSpellEffectFilter();
+            this.toggleArtifactSubtypeFilter();
             this.toggleColorFilter();
             this.updateFiltersCount();
             this.searchCards();
@@ -74,6 +78,20 @@ class MTGDeckBuilder {
             });
         });
         
+        document.querySelectorAll('.spell-effect-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateFiltersCount();
+                this.searchCards();
+            });
+        });
+        
+        document.querySelectorAll('.artifact-subtype-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateFiltersCount();
+                this.searchCards();
+            });
+        });
+        
         // Subtype search functionality
         document.getElementById('subtype-search').addEventListener('input', (e) => {
             this.filterSubtypes(e.target.value);
@@ -92,6 +110,16 @@ class MTGDeckBuilder {
         // Rarity search functionality
         document.getElementById('rarity-search').addEventListener('input', (e) => {
             this.filterRarities(e.target.value);
+        });
+        
+        // Spell effect search functionality
+        document.getElementById('spell-effect-search').addEventListener('input', (e) => {
+            this.filterSpellEffects(e.target.value);
+        });
+        
+        // Artifact subtype search functionality
+        document.getElementById('artifact-subtype-search').addEventListener('input', (e) => {
+            this.filterArtifactSubtypes(e.target.value);
         });
         
         document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
@@ -321,6 +349,47 @@ class MTGDeckBuilder {
                 filters.push(`(${keywordQuery})`);
             }
         }
+        
+        // Multi-select spell effects (only if instant, sorcery or enchantment type is selected)
+        if (selectedType === 'instant' || selectedType === 'sorcery' || selectedType === 'enchantment') {
+            const selectedSpellEffects = Array.from(document.querySelectorAll('.spell-effect-checkbox:checked')).map(cb => cb.value);
+            if (selectedSpellEffects.length > 0) {
+                const spellEffectQueries = selectedSpellEffects.map(effect => {
+                    switch(effect) {
+                        case 'draw': return 'oracle:"draw a card"';
+                        case 'removal': return 'oracle:"destroy target"';
+                        case 'burn': return 'oracle:"damage"';
+                        case 'counter': return 'oracle:"counter target"';
+                        case 'token': return 'oracle:"create a token"';
+                        case 'pump': return 'oracle:"+1/+1"';
+                        case 'heal': return 'oracle:"gain life"';
+                        case 'tutor': return 'oracle:"search your library"';
+                        default: return '';
+                    }
+                }).filter(q => q);
+                
+                if (spellEffectQueries.length > 0) {
+                    if (spellEffectQueries.length === 1) {
+                        filters.push(spellEffectQueries[0]);
+                    } else {
+                        filters.push(`(${spellEffectQueries.join(' OR ')})`);
+                    }
+                }
+            }
+        }
+        
+        // Multi-select artifact subtypes (only if artifact type is selected)
+        if (selectedType === 'artifact') {
+            const selectedArtifactSubtypes = Array.from(document.querySelectorAll('.artifact-subtype-checkbox:checked')).map(cb => cb.value);
+            if (selectedArtifactSubtypes.length > 0) {
+                if (selectedArtifactSubtypes.length === 1) {
+                    filters.push(`t:${selectedArtifactSubtypes[0]}`);
+                } else {
+                    const artifactSubtypeQuery = selectedArtifactSubtypes.map(s => `t:${s}`).join(' OR ');
+                    filters.push(`(${artifactSubtypeQuery})`);
+                }
+            }
+        }
 
         const format = document.getElementById('format-filter').value;
         if (format) {
@@ -364,6 +433,18 @@ class MTGDeckBuilder {
         if (selectedType === 'land') {
             const selectedLandSubtypes = document.querySelectorAll('.land-subtype-checkbox:checked').length;
             if (selectedLandSubtypes > 0) count++;
+        }
+        
+        // Only count spell effects if instant, sorcery or enchantment type is selected
+        if (selectedType === 'instant' || selectedType === 'sorcery' || selectedType === 'enchantment') {
+            const selectedSpellEffects = document.querySelectorAll('.spell-effect-checkbox:checked').length;
+            if (selectedSpellEffects > 0) count++;
+        }
+        
+        // Only count artifact subtypes if artifact type is selected
+        if (selectedType === 'artifact') {
+            const selectedArtifactSubtypes = document.querySelectorAll('.artifact-subtype-checkbox:checked').length;
+            if (selectedArtifactSubtypes > 0) count++;
         }
         
         const selectedKeywords = document.querySelectorAll('.keyword-checkbox:checked').length;
@@ -483,6 +564,38 @@ class MTGDeckBuilder {
         });
     }
     
+    filterSpellEffects(searchTerm) {
+        const options = document.querySelectorAll('#spell-effect-options .multi-select-option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const span = option.querySelector('span');
+            const text = span.textContent.toLowerCase();
+            
+            if (text.includes(term)) {
+                option.classList.remove('hidden');
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+    }
+    
+    filterArtifactSubtypes(searchTerm) {
+        const options = document.querySelectorAll('#artifact-subtype-options .multi-select-option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const span = option.querySelector('span');
+            const text = span.textContent.toLowerCase();
+            
+            if (text.includes(term)) {
+                option.classList.remove('hidden');
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+    }
+    
     toggleLandSubtypeFilter() {
         const typeFilter = document.getElementById('type-filter').value;
         const landSubtypeContainer = document.querySelector('.filter-column:nth-child(6)');
@@ -533,6 +646,62 @@ class MTGDeckBuilder {
             colorLabel.style.pointerEvents = 'auto';
         }
     }
+    
+    toggleSpellEffectFilter() {
+        const typeFilter = document.getElementById('type-filter').value;
+        const spellEffectContainer = document.querySelector('.filter-column:nth-child(7)');
+        const spellEffectCheckboxes = document.querySelectorAll('.spell-effect-checkbox');
+        const spellEffectSearch = document.getElementById('spell-effect-search');
+        
+        if (typeFilter === 'instant' || typeFilter === 'sorcery' || typeFilter === 'enchantment') {
+            // Enable spell effect filter
+            spellEffectContainer.style.opacity = '1';
+            spellEffectContainer.style.pointerEvents = 'auto';
+            spellEffectCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+            spellEffectSearch.disabled = false;
+        } else {
+            // Disable spell effect filter
+            spellEffectContainer.style.opacity = '0.5';
+            spellEffectContainer.style.pointerEvents = 'none';
+            spellEffectCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
+            spellEffectSearch.value = '';
+            spellEffectSearch.disabled = true;
+            this.filterSpellEffects(''); // Show all options
+        }
+    }
+    
+    toggleArtifactSubtypeFilter() {
+        const typeFilter = document.getElementById('type-filter').value;
+        const artifactSubtypeContainer = document.querySelector('.filter-column:nth-child(8)');
+        const artifactSubtypeCheckboxes = document.querySelectorAll('.artifact-subtype-checkbox');
+        const artifactSubtypeSearch = document.getElementById('artifact-subtype-search');
+        
+        if (typeFilter === 'artifact') {
+            // Enable artifact subtype filter
+            artifactSubtypeContainer.style.opacity = '1';
+            artifactSubtypeContainer.style.pointerEvents = 'auto';
+            artifactSubtypeCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+            artifactSubtypeSearch.disabled = false;
+        } else {
+            // Disable artifact subtype filter
+            artifactSubtypeContainer.style.opacity = '0.5';
+            artifactSubtypeContainer.style.pointerEvents = 'none';
+            artifactSubtypeCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
+            artifactSubtypeSearch.value = '';
+            artifactSubtypeSearch.disabled = true;
+            this.filterArtifactSubtypes(''); // Show all options
+        }
+    }
 
     clearFilters() {
         document.getElementById('type-filter').value = '';
@@ -549,6 +718,14 @@ class MTGDeckBuilder {
         });
         
         document.querySelectorAll('.land-subtype-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        document.querySelectorAll('.spell-effect-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        document.querySelectorAll('.artifact-subtype-checkbox').forEach(checkbox => {
             checkbox.checked = false;
         });
         
@@ -572,6 +749,14 @@ class MTGDeckBuilder {
         document.getElementById('rarity-search').value = '';
         this.filterRarities(''); // Show all options
         
+        // Clear spell effect search
+        document.getElementById('spell-effect-search').value = '';
+        this.filterSpellEffects(''); // Show all options
+        
+        // Clear artifact subtype search
+        document.getElementById('artifact-subtype-search').value = '';
+        this.filterArtifactSubtypes(''); // Show all options
+        
         document.getElementById('format-filter').value = '';
         document.getElementById('legendary-filter').checked = false;
         document.getElementById('basic-land-filter').checked = false;
@@ -579,6 +764,8 @@ class MTGDeckBuilder {
         // Reset filter states
         this.toggleSubtypeFilter();
         this.toggleLandSubtypeFilter();
+        this.toggleSpellEffectFilter();
+        this.toggleArtifactSubtypeFilter();
         this.toggleColorFilter();
         
         this.updateFiltersCount();

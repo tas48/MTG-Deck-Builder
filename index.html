@@ -39,7 +39,7 @@
                         <option value="name">Nome da carta</option>
                         <option value="oracle">Descrição da carta</option>
                     </select>
-                    <input type="text" id="search-input" placeholder="Search cards..." class="search-input">
+                    <input type="text" id="search-input" placeholder="Search cards... Ex: Dire Mimic" class="search-input">
                     <button id="search-btn" class="btn btn-primary">
                         <i class="fas fa-search"></i>
                     </button>
@@ -616,7 +616,95 @@
                             </div>
                         </div>
                         
-                        <!-- Column 7: Others -->
+                        <!-- Column 7: Instant/Sorcery Effects -->
+                        <div class="filter-column">
+                            <div class="filter-group">
+                                <label for="spell-effect-filter">Spell Effects:</label>
+                                <input type="text" id="spell-effect-search" placeholder="Search spell effect..." class="subtype-search-input">
+                                <div class="multi-select-container">
+                                    <div class="multi-select-options" id="spell-effect-options">
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="draw" class="spell-effect-checkbox">
+                                            <span>Draw (Compra cartas)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="removal" class="spell-effect-checkbox">
+                                            <span>Removal (Destrói)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="burn" class="spell-effect-checkbox">
+                                            <span>Burn (Dano direto)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="counter" class="spell-effect-checkbox">
+                                            <span>Counter (Nega mágicas)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="token" class="spell-effect-checkbox">
+                                            <span>Token (Gera fichas)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="pump" class="spell-effect-checkbox">
+                                            <span>Pump/Buff (Aumenta poder)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="heal" class="spell-effect-checkbox">
+                                            <span>Heal (Cura vida)</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="tutor" class="spell-effect-checkbox">
+                                            <span>Tutor (Busca cartas)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Column 8: Artifact Subtypes -->
+                        <div class="filter-column">
+                            <div class="filter-group">
+                                <label for="artifact-subtype-filter">Artifact Subtypes:</label>
+                                <input type="text" id="artifact-subtype-search" placeholder="Search artifact subtype..." class="subtype-search-input">
+                                <div class="multi-select-container">
+                                    <div class="multi-select-options" id="artifact-subtype-options">
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="equipment" class="artifact-subtype-checkbox">
+                                            <span>Equipment</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="vehicle" class="artifact-subtype-checkbox">
+                                            <span>Vehicle</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="clue" class="artifact-subtype-checkbox">
+                                            <span>Clue</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="treasure" class="artifact-subtype-checkbox">
+                                            <span>Treasure</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="food" class="artifact-subtype-checkbox">
+                                            <span>Food</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="contraption" class="artifact-subtype-checkbox">
+                                            <span>Contraption</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="mana-rock" class="artifact-subtype-checkbox">
+                                            <span>Mana Rock</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="artifact-land" class="artifact-subtype-checkbox">
+                                            <span>Artifact Land</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Column 9: Others -->
                         <div class="filter-column">
                             <div class="filter-group">
                                 <label>

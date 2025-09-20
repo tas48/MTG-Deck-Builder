@@ -209,26 +209,26 @@ body {
 /* Filters */
 .filters {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(9, 1fr);
     gap: 1rem;
     align-items: start;
 }
 
 @media (max-width: 1600px) {
     .filters {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(8, 1fr);
     }
 }
 
 @media (max-width: 1400px) {
     .filters {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
     }
 }
 
 @media (max-width: 1024px) {
     .filters {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
