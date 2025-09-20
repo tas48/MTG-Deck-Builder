@@ -277,7 +277,13 @@ class MTGDeckBuilder {
         let filters = [];
 
         const type = document.getElementById('type-filter').value;
-        if (type) filters.push(`t:${type}`);
+        if (type) {
+            if (type === 'token') {
+                filters.push('is:token t:creature');
+            } else {
+                filters.push(`t:${type}`);
+            }
+        }
 
         const color = document.getElementById('color-filter').value;
         if (color) {
@@ -312,7 +318,7 @@ class MTGDeckBuilder {
 
         // Multi-select subtypes (only if creature type is selected)
         const selectedType = document.getElementById('type-filter').value;
-        if (selectedType === 'creature') {
+        if (selectedType === 'creature' || selectedType === 'token') {
             const selectedSubtypes = Array.from(document.querySelectorAll('.subtype-checkbox:checked')).map(cb => cb.value);
             if (selectedSubtypes.length > 0) {
                 if (selectedSubtypes.length === 1) {
@@ -416,9 +422,9 @@ class MTGDeckBuilder {
         const selectedRarities = document.querySelectorAll('.rarity-checkbox:checked').length;
         if (selectedRarities > 0) count++;
         
-        // Only count subtypes if creature type is selected
+        // Only count subtypes if creature or token type is selected
         const selectedType = document.getElementById('type-filter').value;
-        if (selectedType === 'creature') {
+        if (selectedType === 'creature' || selectedType === 'token') {
             const selectedSubtypes = document.querySelectorAll('.subtype-checkbox:checked').length;
             if (selectedSubtypes > 0) count++;
         }
@@ -488,7 +494,7 @@ class MTGDeckBuilder {
         const subtypeCheckboxes = document.querySelectorAll('.subtype-checkbox');
         const subtypeSearch = document.getElementById('subtype-search');
         
-        if (typeFilter === 'creature') {
+        if (typeFilter === 'creature' || typeFilter === 'token') {
             // Enable subtype filter
             subtypeContainer.style.opacity = '1';
             subtypeContainer.style.pointerEvents = 'auto';
