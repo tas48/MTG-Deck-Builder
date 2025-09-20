@@ -193,16 +193,40 @@ body {
 /* Filters */
 .filters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 0.8rem;
-    align-items: end;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+@media (max-width: 1400px) {
+    .filters {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .filters {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
     .filters {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 0.6rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
     }
+}
+
+@media (max-width: 480px) {
+    .filters {
+        grid-template-columns: 1fr;
+    }
+}
+
+.filter-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .filter-group {
