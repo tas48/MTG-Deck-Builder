@@ -237,6 +237,47 @@ body {
     transform: scale(1.2);
 }
 
+/* Multi-select filters */
+.multi-select-container {
+    background: #1a1a1a;
+    border: 2px solid #444444;
+    border-radius: 8px;
+    padding: 0.5rem;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.multi-select-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.multi-select-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    color: #e5e5e5;
+}
+
+.multi-select-option:hover {
+    background: #333333;
+}
+
+.multi-select-option input[type="checkbox"] {
+    margin: 0;
+    transform: scale(1.1);
+}
+
+.multi-select-option span {
+    user-select: none;
+}
+
 /* Content Area */
 .content-area {
     display: grid;

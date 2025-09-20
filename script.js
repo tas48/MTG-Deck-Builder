@@ -39,14 +39,22 @@ class MTGDeckBuilder {
             this.updateFiltersCount();
             this.searchCards();
         });
-        document.getElementById('rarity-filter').addEventListener('change', () => {
-            this.updateFiltersCount();
-            this.searchCards();
+        
+        // Multi-select filters
+        document.querySelectorAll('.rarity-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateFiltersCount();
+                this.searchCards();
+            });
         });
-        document.getElementById('keyword-filter').addEventListener('change', () => {
-            this.updateFiltersCount();
-            this.searchCards();
+        
+        document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateFiltersCount();
+                this.searchCards();
+            });
         });
+        
         document.getElementById('format-filter').addEventListener('change', () => {
             this.updateFiltersCount();
             this.searchCards();
@@ -88,10 +96,18 @@ class MTGDeckBuilder {
 
     async searchCards() {
         const query = document.getElementById('search-input').value.trim();
-        if (!query) return;
-
         const filters = this.buildFilters();
-        const searchQuery = `${query} ${filters}`.trim();
+        
+        console.log('searchCards chamada - Query:', query, 'Filtros:', filters);
+        
+        // If no query and no filters, don't search
+        if (!query && !filters.trim()) {
+            console.log('Nenhuma busca - sem query e sem filtros');
+            return;
+        }
+        
+        const searchQuery = query ? `${query} ${filters}`.trim() : filters;
+        console.log('Query final:', searchQuery);
 
         this.showLoading(true);
         this.hideNoResults();
@@ -162,11 +178,27 @@ class MTGDeckBuilder {
             }
         }
 
-        const rarity = document.getElementById('rarity-filter').value;
-        if (rarity) filters.push(`r:${rarity}`);
+        // Multi-select rarity
+        const selectedRarities = Array.from(document.querySelectorAll('.rarity-checkbox:checked')).map(cb => cb.value);
+        if (selectedRarities.length > 0) {
+            if (selectedRarities.length === 1) {
+                filters.push(`r:${selectedRarities[0]}`);
+            } else {
+                const rarityQuery = selectedRarities.map(r => `r:${r}`).join(' OR ');
+                filters.push(`(${rarityQuery})`);
+            }
+        }
 
-        const keyword = document.getElementById('keyword-filter').value;
-        if (keyword) filters.push(`keyword:${keyword}`);
+        // Multi-select keywords
+        const selectedKeywords = Array.from(document.querySelectorAll('.keyword-checkbox:checked')).map(cb => cb.value);
+        if (selectedKeywords.length > 0) {
+            if (selectedKeywords.length === 1) {
+                filters.push(`keyword:${selectedKeywords[0]}`);
+            } else {
+                const keywordQuery = selectedKeywords.map(k => `keyword:${k}`).join(' OR ');
+                filters.push(`(${keywordQuery})`);
+            }
+        }
 
         const format = document.getElementById('format-filter').value;
         if (format) {
@@ -180,7 +212,9 @@ class MTGDeckBuilder {
         const legendary = document.getElementById('legendary-filter').checked;
         if (legendary) filters.push('is:legendary');
 
-        return filters.join(' ');
+        const result = filters.join(' ');
+        console.log('Filtros construídos:', result);
+        return result;
     }
 
     getActiveFiltersCount() {
@@ -189,8 +223,14 @@ class MTGDeckBuilder {
         if (document.getElementById('type-filter').value) count++;
         if (document.getElementById('color-filter').value) count++;
         if (document.getElementById('cmc-filter').value) count++;
-        if (document.getElementById('rarity-filter').value) count++;
-        if (document.getElementById('keyword-filter').value) count++;
+        
+        // Count multi-select filters
+        const selectedRarities = document.querySelectorAll('.rarity-checkbox:checked').length;
+        if (selectedRarities > 0) count++;
+        
+        const selectedKeywords = document.querySelectorAll('.keyword-checkbox:checked').length;
+        if (selectedKeywords > 0) count++;
+        
         if (document.getElementById('format-filter').value) count++;
         if (document.getElementById('legendary-filter').checked) count++;
         
@@ -216,8 +256,16 @@ class MTGDeckBuilder {
         document.getElementById('type-filter').value = '';
         document.getElementById('color-filter').value = '';
         document.getElementById('cmc-filter').value = '';
-        document.getElementById('rarity-filter').value = '';
-        document.getElementById('keyword-filter').value = '';
+        
+        // Clear multi-select filters
+        document.querySelectorAll('.rarity-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
         document.getElementById('format-filter').value = '';
         document.getElementById('legendary-filter').checked = false;
         this.updateFiltersCount();
