@@ -16,6 +16,8 @@ class MTGDeckBuilder {
         this.updateDeckDisplay();
         this.updateStats();
         this.updateFiltersCount();
+        this.toggleSubtypeFilter(); // Initialize subtype filter state
+        this.toggleLandSubtypeFilter(); // Initialize land subtype filter state
     }
 
     setupEventListeners() {
@@ -28,6 +30,8 @@ class MTGDeckBuilder {
 
         // Filters
         document.getElementById('type-filter').addEventListener('change', () => {
+            this.toggleSubtypeFilter();
+            this.toggleLandSubtypeFilter();
             this.updateFiltersCount();
             this.searchCards();
         });
@@ -55,6 +59,23 @@ class MTGDeckBuilder {
             });
         });
         
+        document.querySelectorAll('.land-subtype-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateFiltersCount();
+                this.searchCards();
+            });
+        });
+        
+        // Subtype search functionality
+        document.getElementById('subtype-search').addEventListener('input', (e) => {
+            this.filterSubtypes(e.target.value);
+        });
+        
+        // Land subtype search functionality
+        document.getElementById('land-subtype-search').addEventListener('input', (e) => {
+            this.filterLandSubtypes(e.target.value);
+        });
+        
         document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 this.updateFiltersCount();
@@ -67,6 +88,10 @@ class MTGDeckBuilder {
             this.searchCards();
         });
         document.getElementById('legendary-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('basic-land-filter').addEventListener('change', () => {
             this.updateFiltersCount();
             this.searchCards();
         });
@@ -174,7 +199,15 @@ class MTGDeckBuilder {
         if (type) filters.push(`t:${type}`);
 
         const color = document.getElementById('color-filter').value;
-        if (color) filters.push(`c:${color}`);
+        if (color) {
+            // For single colors, use exact color match (exclusive)
+            if (['w', 'u', 'b', 'r', 'g', 'c'].includes(color)) {
+                filters.push(`c=${color}`);
+            } else {
+                // For multi-color combinations, use the normal syntax
+                filters.push(`c:${color}`);
+            }
+        }
 
         const cmc = document.getElementById('cmc-filter').value;
         if (cmc) {
@@ -196,14 +229,30 @@ class MTGDeckBuilder {
             }
         }
 
-        // Multi-select subtypes
-        const selectedSubtypes = Array.from(document.querySelectorAll('.subtype-checkbox:checked')).map(cb => cb.value);
-        if (selectedSubtypes.length > 0) {
-            if (selectedSubtypes.length === 1) {
-                filters.push(`t:creature t:${selectedSubtypes[0]}`);
-            } else {
-                const subtypeQuery = selectedSubtypes.map(s => `t:${s}`).join(' OR ');
-                filters.push(`t:creature (${subtypeQuery})`);
+        // Multi-select subtypes (only if creature type is selected)
+        const selectedType = document.getElementById('type-filter').value;
+        if (selectedType === 'creature') {
+            const selectedSubtypes = Array.from(document.querySelectorAll('.subtype-checkbox:checked')).map(cb => cb.value);
+            if (selectedSubtypes.length > 0) {
+                if (selectedSubtypes.length === 1) {
+                    filters.push(`t:${selectedSubtypes[0]}`);
+                } else {
+                    const subtypeQuery = selectedSubtypes.map(s => `t:${s}`).join(' OR ');
+                    filters.push(`(${subtypeQuery})`);
+                }
+            }
+        }
+        
+        // Multi-select land subtypes (only if land type is selected)
+        if (selectedType === 'land') {
+            const selectedLandSubtypes = Array.from(document.querySelectorAll('.land-subtype-checkbox:checked')).map(cb => cb.value);
+            if (selectedLandSubtypes.length > 0) {
+                if (selectedLandSubtypes.length === 1) {
+                    filters.push(`t:${selectedLandSubtypes[0]}`);
+                } else {
+                    const landSubtypeQuery = selectedLandSubtypes.map(s => `t:${s}`).join(' OR ');
+                    filters.push(`(${landSubtypeQuery})`);
+                }
             }
         }
 
@@ -229,6 +278,9 @@ class MTGDeckBuilder {
 
         const legendary = document.getElementById('legendary-filter').checked;
         if (legendary) filters.push('is:legendary');
+        
+        const basicLand = document.getElementById('basic-land-filter').checked;
+        if (basicLand) filters.push('is:basic');
 
         const result = filters.join(' ');
         console.log('Filtros construídos:', result);
@@ -246,14 +298,25 @@ class MTGDeckBuilder {
         const selectedRarities = document.querySelectorAll('.rarity-checkbox:checked').length;
         if (selectedRarities > 0) count++;
         
-        const selectedSubtypes = document.querySelectorAll('.subtype-checkbox:checked').length;
-        if (selectedSubtypes > 0) count++;
+        // Only count subtypes if creature type is selected
+        const selectedType = document.getElementById('type-filter').value;
+        if (selectedType === 'creature') {
+            const selectedSubtypes = document.querySelectorAll('.subtype-checkbox:checked').length;
+            if (selectedSubtypes > 0) count++;
+        }
+        
+        // Only count land subtypes if land type is selected
+        if (selectedType === 'land') {
+            const selectedLandSubtypes = document.querySelectorAll('.land-subtype-checkbox:checked').length;
+            if (selectedLandSubtypes > 0) count++;
+        }
         
         const selectedKeywords = document.querySelectorAll('.keyword-checkbox:checked').length;
         if (selectedKeywords > 0) count++;
         
         if (document.getElementById('format-filter').value) count++;
         if (document.getElementById('legendary-filter').checked) count++;
+        if (document.getElementById('basic-land-filter').checked) count++;
         
         return count;
     }
@@ -273,6 +336,98 @@ class MTGDeckBuilder {
         }
     }
 
+    filterSubtypes(searchTerm) {
+        const options = document.querySelectorAll('#subtype-options .multi-select-option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const span = option.querySelector('span');
+            const text = span.textContent.toLowerCase();
+            
+            if (text.includes(term)) {
+                option.classList.remove('hidden');
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+    }
+
+    toggleSubtypeFilter() {
+        const typeFilter = document.getElementById('type-filter').value;
+        const subtypeContainer = document.querySelector('.filter-column:nth-child(4)');
+        const subtypeCheckboxes = document.querySelectorAll('.subtype-checkbox');
+        const subtypeSearch = document.getElementById('subtype-search');
+        
+        if (typeFilter === 'creature') {
+            // Enable subtype filter
+            subtypeContainer.style.opacity = '1';
+            subtypeContainer.style.pointerEvents = 'auto';
+            subtypeCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+            subtypeSearch.disabled = false;
+        } else {
+            // Disable subtype filter
+            subtypeContainer.style.opacity = '0.5';
+            subtypeContainer.style.pointerEvents = 'none';
+            subtypeCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
+            subtypeSearch.value = '';
+            subtypeSearch.disabled = true;
+            this.filterSubtypes(''); // Show all options
+        }
+    }
+    
+    filterLandSubtypes(searchTerm) {
+        const options = document.querySelectorAll('#land-subtype-options .multi-select-option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const span = option.querySelector('span');
+            const text = span.textContent.toLowerCase();
+            
+            if (text.includes(term)) {
+                option.classList.remove('hidden');
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+    }
+    
+    toggleLandSubtypeFilter() {
+        const typeFilter = document.getElementById('type-filter').value;
+        const landSubtypeContainer = document.querySelector('.filter-column:nth-child(6)');
+        const landSubtypeCheckboxes = document.querySelectorAll('.land-subtype-checkbox');
+        const landSubtypeSearch = document.getElementById('land-subtype-search');
+        const basicLandFilter = document.getElementById('basic-land-filter');
+        
+        if (typeFilter === 'land') {
+            // Enable land subtype filter
+            landSubtypeContainer.style.opacity = '1';
+            landSubtypeContainer.style.pointerEvents = 'auto';
+            landSubtypeCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+            landSubtypeSearch.disabled = false;
+            basicLandFilter.disabled = false;
+        } else {
+            // Disable land subtype filter
+            landSubtypeContainer.style.opacity = '0.5';
+            landSubtypeContainer.style.pointerEvents = 'none';
+            landSubtypeCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
+            landSubtypeSearch.value = '';
+            landSubtypeSearch.disabled = true;
+            basicLandFilter.checked = false;
+            basicLandFilter.disabled = true;
+            this.filterLandSubtypes(''); // Show all options
+        }
+    }
+
     clearFilters() {
         document.getElementById('type-filter').value = '';
         document.getElementById('color-filter').value = '';
@@ -287,12 +442,30 @@ class MTGDeckBuilder {
             checkbox.checked = false;
         });
         
+        document.querySelectorAll('.land-subtype-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
         document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
             checkbox.checked = false;
         });
         
+        // Clear subtype search
+        document.getElementById('subtype-search').value = '';
+        this.filterSubtypes(''); // Show all options
+        
+        // Clear land subtype search
+        document.getElementById('land-subtype-search').value = '';
+        this.filterLandSubtypes(''); // Show all options
+        
         document.getElementById('format-filter').value = '';
         document.getElementById('legendary-filter').checked = false;
+        document.getElementById('basic-land-filter').checked = false;
+        
+        // Reset filter states
+        this.toggleSubtypeFilter();
+        this.toggleLandSubtypeFilter();
+        
         this.updateFiltersCount();
         this.searchCards();
     }

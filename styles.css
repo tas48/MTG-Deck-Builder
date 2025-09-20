@@ -193,26 +193,26 @@ body {
 /* Filters */
 .filters {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 1rem;
     align-items: start;
 }
 
 @media (max-width: 1600px) {
     .filters {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
     }
 }
 
 @media (max-width: 1400px) {
     .filters {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
 @media (max-width: 1024px) {
     .filters {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
@@ -272,15 +272,35 @@ body {
     background: #1a1a1a;
     border: 2px solid #444444;
     border-radius: 8px;
-    padding: 0.5rem;
-    max-height: 120px;
+    max-height: 300px;
     overflow-y: auto;
+}
+
+.subtype-search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-bottom: 1px solid #444444;
+    border-radius: 6px 6px 0 0;
+    background: #1a1a1a;
+    color: #e5e5e5;
+    font-size: 0.9rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.subtype-search-input:focus {
+    outline: none;
+    border-bottom-color: #666666;
+    box-shadow: 0 2px 0 0 rgba(102, 102, 102, 0.1);
 }
 
 .multi-select-options {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    padding: 0.5rem;
 }
 
 .multi-select-option {
@@ -306,6 +326,10 @@ body {
 
 .multi-select-option span {
     user-select: none;
+}
+
+.multi-select-option.hidden {
+    display: none;
 }
 
 /* Content Area */

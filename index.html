@@ -31,44 +31,44 @@
             <!-- Search Section -->
             <section class="search-section">
                 <div class="search-container">
-                    <div class="search-bar">
-                        <input type="text" id="search-input" placeholder="Buscar cartas..." class="search-input">
-                        <button id="search-btn" class="btn btn-primary">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <button id="filter-search-btn" class="btn btn-secondary">
-                            <i class="fas fa-filter"></i> Buscar com Filtros (<span id="active-filters-count">0</span>)
-                        </button>
-                    </div>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search cards..." class="search-input">
+                    <button id="search-btn" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button id="filter-search-btn" class="btn btn-secondary">
+                        <i class="fas fa-filter"></i> Search with Filters (<span id="active-filters-count">0</span>)
+                    </button>
+                </div>
                     
                     <!-- Advanced Filters -->
                     <div class="filters">
-                        <!-- Coluna 1: Tipo e Cor -->
+                        <!-- Column 1: Type and Color -->
                         <div class="filter-column">
                             <div class="filter-group">
-                                <label for="type-filter">Tipo:</label>
+                                <label for="type-filter">Type:</label>
                                 <select id="type-filter" class="filter-select">
-                                    <option value="">Todos</option>
-                                    <option value="creature">Criatura</option>
-                                    <option value="land">Terreno</option>
-                                    <option value="instant">Instantâneo</option>
-                                    <option value="sorcery">Feitiço</option>
-                                    <option value="enchantment">Encantamento</option>
-                                    <option value="artifact">Artefato</option>
+                                    <option value="">All</option>
+                                    <option value="creature">Creature</option>
+                                    <option value="land">Land</option>
+                                    <option value="instant">Instant</option>
+                                    <option value="sorcery">Sorcery</option>
+                                    <option value="enchantment">Enchantment</option>
+                                    <option value="artifact">Artifact</option>
                                     <option value="planeswalker">Planeswalker</option>
                                 </select>
                             </div>
                             
                             <div class="filter-group">
-                                <label for="color-filter">Cor:</label>
+                                <label for="color-filter">Color:</label>
                                 <select id="color-filter" class="filter-select">
-                                    <option value="">Todas</option>
-                                    <option value="w">Branco</option>
-                                    <option value="u">Azul</option>
-                                    <option value="b">Preto</option>
-                                    <option value="r">Vermelho</option>
-                                    <option value="g">Verde</option>
-                                    <option value="c">Incolor</option>
+                                    <option value="">All</option>
+                                    <option value="w">White</option>
+                                    <option value="u">Blue</option>
+                                    <option value="b">Black</option>
+                                    <option value="r">Red</option>
+                                    <option value="g">Green</option>
+                                    <option value="c">Colorless</option>
                                     <option value="wu">Azorius (WU)</option>
                                     <option value="wb">Orzhov (WB)</option>
                                     <option value="wr">Boros (WR)</option>
@@ -83,12 +83,12 @@
                             </div>
                         </div>
                         
-                        <!-- Coluna 2: CMC e Formato -->
+                        <!-- Column 2: CMC and Format -->
                         <div class="filter-column">
                             <div class="filter-group">
                                 <label for="cmc-filter">CMC:</label>
                                 <select id="cmc-filter" class="filter-select">
-                                    <option value="">Todos</option>
+                                    <option value="">All</option>
                                     <option value="0">0</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -100,9 +100,9 @@
                             </div>
                             
                             <div class="filter-group">
-                                <label for="format-filter">Formato:</label>
+                                <label for="format-filter">Format:</label>
                                 <select id="format-filter" class="filter-select">
-                                    <option value="">Todos</option>
+                                    <option value="">All</option>
                                     <option value="standard">Standard</option>
                                     <option value="pioneer">Pioneer</option>
                                     <option value="modern">Modern</option>
@@ -114,42 +114,43 @@
                             </div>
                         </div>
                         
-                        <!-- Coluna 3: Raridade -->
+                        <!-- Column 3: Rarity -->
                         <div class="filter-column">
                             <div class="filter-group">
-                                <label for="rarity-filter">Raridade:</label>
+                                <label for="rarity-filter">Rarity:</label>
                                 <div class="multi-select-container">
                                     <div class="multi-select-options">
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="common" class="rarity-checkbox">
-                                            <span>Comum</span>
+                                            <span>Common</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="uncommon" class="rarity-checkbox">
-                                            <span>Incomum</span>
+                                            <span>Uncommon</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="rare" class="rarity-checkbox">
-                                            <span>Rara</span>
+                                            <span>Rare</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="mythic" class="rarity-checkbox">
-                                            <span>Mítica</span>
+                                            <span>Mythic</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Coluna 4: Subtipo de Criaturas -->
+                        <!-- Column 4: Creature Subtypes -->
                         <div class="filter-column">
                             <div class="filter-group">
-                                <label for="subtype-filter">Subtipo de Criaturas:</label>
+                                <label for="subtype-filter">Creature Subtypes:</label>
+                                <input type="text" id="subtype-search" placeholder="Search subtype..." class="subtype-search-input">
                                 <div class="multi-select-container">
-                                    <div class="multi-select-options">
+                                    <div class="multi-select-options" id="subtype-options">
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="elf" class="subtype-checkbox">
-                                            <span>Elfo</span>
+                                            <span>Elf</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="goblin" class="subtype-checkbox">
@@ -157,53 +158,321 @@
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="human" class="subtype-checkbox">
-                                            <span>Humano</span>
+                                            <span>Human</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="zombie" class="subtype-checkbox">
-                                            <span>Zumbi</span>
+                                            <span>Zombie</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="dragon" class="subtype-checkbox">
-                                            <span>Dragão</span>
+                                            <span>Dragon</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="angel" class="subtype-checkbox">
-                                            <span>Anjo</span>
+                                            <span>Angel</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="demon" class="subtype-checkbox">
-                                            <span>Demônio</span>
+                                            <span>Demon</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="vampire" class="subtype-checkbox">
-                                            <span>Vampiro</span>
+                                            <span>Vampire</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="wizard" class="subtype-checkbox">
-                                            <span>Mago</span>
+                                            <span>Wizard</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="warrior" class="subtype-checkbox">
-                                            <span>Guerreiro</span>
+                                            <span>Warrior</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="knight" class="subtype-checkbox">
-                                            <span>Cavaleiro</span>
+                                            <span>Knight</span>
                                         </label>
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="beast" class="subtype-checkbox">
-                                            <span>Fera</span>
+                                            <span>Beast</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="elemental" class="subtype-checkbox">
+                                            <span>Elemental</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="cleric" class="subtype-checkbox">
+                                            <span>Cleric</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="shapeshifter" class="subtype-checkbox">
+                                            <span>Shapeshifter</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="cat" class="subtype-checkbox">
+                                            <span>Cat</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="bird" class="subtype-checkbox">
+                                            <span>Bird</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="merfolk" class="subtype-checkbox">
+                                            <span>Merfolk</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="druid" class="subtype-checkbox">
+                                            <span>Druid</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="faerie" class="subtype-checkbox">
+                                            <span>Faerie</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="giant" class="subtype-checkbox">
+                                            <span>Giant</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="shaman" class="subtype-checkbox">
+                                            <span>Shaman</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="spirit" class="subtype-checkbox">
+                                            <span>Spirit</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="sliver" class="subtype-checkbox">
+                                            <span>Sliver</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="construct" class="subtype-checkbox">
+                                            <span>Construct</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="ape" class="subtype-checkbox">
+                                            <span>Ape</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="serpent" class="subtype-checkbox">
+                                            <span>Serpent</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="witch" class="subtype-checkbox">
+                                            <span>Witch</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="snake" class="subtype-checkbox">
+                                            <span>Snake</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="warlock" class="subtype-checkbox">
+                                            <span>Warlock</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="assassin" class="subtype-checkbox">
+                                            <span>Assassin</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="atog" class="subtype-checkbox">
+                                            <span>Atog</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="basilisk" class="subtype-checkbox">
+                                            <span>Basilisk</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="beetle" class="subtype-checkbox">
+                                            <span>Beetle</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="berserker" class="subtype-checkbox">
+                                            <span>Berserker</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="boar" class="subtype-checkbox">
+                                            <span>Boar</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="brigand" class="subtype-checkbox">
+                                            <span>Brigand</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="centaur" class="subtype-checkbox">
+                                            <span>Centaur</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="changeling" class="subtype-checkbox">
+                                            <span>Changeling</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="cyclops" class="subtype-checkbox">
+                                            <span>Cyclops</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="devil" class="subtype-checkbox">
+                                            <span>Devil</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="dryad" class="subtype-checkbox">
+                                            <span>Dryad</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="golem" class="subtype-checkbox">
+                                            <span>Golem</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="gorgon" class="subtype-checkbox">
+                                            <span>Gorgon</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="griffin" class="subtype-checkbox">
+                                            <span>Griffin</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="hag" class="subtype-checkbox">
+                                            <span>Hag</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="hound" class="subtype-checkbox">
+                                            <span>Hound</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="horror" class="subtype-checkbox">
+                                            <span>Horror</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="horse" class="subtype-checkbox">
+                                            <span>Horse</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="hydra" class="subtype-checkbox">
+                                            <span>Hydra</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="illusion" class="subtype-checkbox">
+                                            <span>Illusion</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="insect" class="subtype-checkbox">
+                                            <span>Insect</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="kavu" class="subtype-checkbox">
+                                            <span>Kavu</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="kirin" class="subtype-checkbox">
+                                            <span>Kirin</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="lizard" class="subtype-checkbox">
+                                            <span>Lizard</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="manticore" class="subtype-checkbox">
+                                            <span>Manticore</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="minotaur" class="subtype-checkbox">
+                                            <span>Minotaur</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="naga" class="subtype-checkbox">
+                                            <span>Naga</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="nymph" class="subtype-checkbox">
+                                            <span>Nymph</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="octopus" class="subtype-checkbox">
+                                            <span>Octopus</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="ooze" class="subtype-checkbox">
+                                            <span>Ooze</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="orc" class="subtype-checkbox">
+                                            <span>Orc</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="ouphe" class="subtype-checkbox">
+                                            <span>Ouphe</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="ox" class="subtype-checkbox">
+                                            <span>Ox</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="pegasus" class="subtype-checkbox">
+                                            <span>Pegasus</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="phantom" class="subtype-checkbox">
+                                            <span>Phantom</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="plant" class="subtype-checkbox">
+                                            <span>Plant</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="rat" class="subtype-checkbox">
+                                            <span>Rat</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="rhino" class="subtype-checkbox">
+                                            <span>Rhino</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="rogue" class="subtype-checkbox">
+                                            <span>Rogue</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="salamander" class="subtype-checkbox">
+                                            <span>Salamander</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="spider" class="subtype-checkbox">
+                                            <span>Spider</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="squid" class="subtype-checkbox">
+                                            <span>Squid</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="squirrel" class="subtype-checkbox">
+                                            <span>Squirrel</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="thrull" class="subtype-checkbox">
+                                            <span>Thrull</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="treefolk" class="subtype-checkbox">
+                                            <span>Treefolk</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="troll" class="subtype-checkbox">
+                                            <span>Troll</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="wolf" class="subtype-checkbox">
+                                            <span>Wolf</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="wurm" class="subtype-checkbox">
+                                            <span>Wurm</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Coluna 5: Palavras-chave -->
+                        <!-- Column 5: Keywords -->
                         <div class="filter-column">
                             <div class="filter-group">
-                                <label for="keyword-filter">Palavra-chave:</label>
+                                <label for="keyword-filter">Keywords:</label>
                                 <div class="multi-select-container">
                                     <div class="multi-select-options">
                                         <label class="multi-select-option">
@@ -259,17 +528,96 @@
                             </div>
                         </div>
                         
-                        <!-- Coluna 6: Outros -->
+                        <!-- Column 6: Land Subtypes -->
+                        <div class="filter-column">
+                            <div class="filter-group">
+                                <label for="land-subtype-filter">Land Subtypes:</label>
+                                <input type="text" id="land-subtype-search" placeholder="Search land subtype..." class="subtype-search-input">
+                                <div class="multi-select-container">
+                                    <div class="multi-select-options" id="land-subtype-options">
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="plains" class="land-subtype-checkbox">
+                                            <span>Plains</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="island" class="land-subtype-checkbox">
+                                            <span>Island</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="swamp" class="land-subtype-checkbox">
+                                            <span>Swamp</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="mountain" class="land-subtype-checkbox">
+                                            <span>Mountain</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="forest" class="land-subtype-checkbox">
+                                            <span>Forest</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="desert" class="land-subtype-checkbox">
+                                            <span>Desert</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="gate" class="land-subtype-checkbox">
+                                            <span>Gate</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="lair" class="land-subtype-checkbox">
+                                            <span>Lair</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="locus" class="land-subtype-checkbox">
+                                            <span>Locus</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="sphere" class="land-subtype-checkbox">
+                                            <span>Sphere</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="tower" class="land-subtype-checkbox">
+                                            <span>Tower</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="urza" class="land-subtype-checkbox">
+                                            <span>Urza's</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="power-plant" class="land-subtype-checkbox">
+                                            <span>Power-Plant</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="mine" class="land-subtype-checkbox">
+                                            <span>Mine</span>
+                                        </label>
+                                        <label class="multi-select-option">
+                                            <input type="checkbox" value="tower" class="land-subtype-checkbox">
+                                            <span>Tower</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label>
+                                    <input type="checkbox" id="basic-land-filter">
+                                    Basic Lands Only
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Column 7: Others -->
                         <div class="filter-column">
                             <div class="filter-group">
                                 <label>
                                     <input type="checkbox" id="legendary-filter">
-                                    Apenas Lendárias
+                                    Legendary Only
                                 </label>
                             </div>
                             
                             <button id="clear-filters-btn" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Limpar Filtros
+                                <i class="fas fa-times"></i> Clear Filters
                             </button>
                         </div>
                     </div>
