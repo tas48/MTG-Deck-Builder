@@ -895,8 +895,14 @@ class MTGDeckBuilder {
     }
 
     showCardPreview(event, cardId) {
-        // Find the card in current deck
-        const card = this.currentDeck.find(c => c.id === cardId);
+        // Find the card in current deck first
+        let card = this.currentDeck.find(c => c.id === cardId);
+        
+        // If not found in deck, try to find in search results
+        if (!card) {
+            card = this.searchResults.find(c => c.id === cardId);
+        }
+        
         if (!card) return;
 
         // Create or get preview element
@@ -1027,7 +1033,10 @@ class MTGDeckBuilder {
                             'https://via.placeholder.com/120x168?text=No+Image';
 
             cardDiv.innerHTML = `
-                <img src="${imageUrl}" alt="${card.name}" class="hand-card-image">
+                <img src="${imageUrl}" alt="${card.name}" class="hand-card-image"
+                     onmouseenter="deckBuilder.showCardPreview(event, '${card.id}')"
+                     onmouseleave="deckBuilder.hideCardPreview()"
+                     onmousemove="deckBuilder.updateCardPreviewPosition(event)">
             `;
 
             container.appendChild(cardDiv);
