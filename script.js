@@ -6,6 +6,7 @@ class MTGDeckBuilder {
         this.currentDeckName = 'default';
         this.searchResults = [];
         this.charts = {};
+        this.selectedDeckKey = 'mtgSelectedDeck';
         
         this.init();
     }
@@ -1323,6 +1324,9 @@ class MTGDeckBuilder {
         this.currentDeckName = cleanName;
         this.currentDeck = this.decks[cleanName];
         
+        // Save the selected deck to localStorage
+        localStorage.setItem(this.selectedDeckKey, this.currentDeckName);
+        
         this.updateDeckSelector();
         this.saveDecks();
         this.updateDeckDisplay();
@@ -1337,6 +1341,9 @@ class MTGDeckBuilder {
             this.currentDeckName = deckName;
             this.currentDeck = this.decks[deckName] || [];
         }
+        
+        // Save the selected deck to localStorage
+        localStorage.setItem(this.selectedDeckKey, this.currentDeckName);
         
         this.updateDeckDisplay();
         this.updateStats();
@@ -1504,7 +1511,16 @@ class MTGDeckBuilder {
             this.decks = { default: [] };
         }
         
-        this.currentDeck = this.decks.default || [];
+        // Load the previously selected deck
+        const selectedDeck = localStorage.getItem(this.selectedDeckKey);
+        if (selectedDeck && this.decks[selectedDeck]) {
+            this.currentDeckName = selectedDeck;
+            this.currentDeck = this.decks[selectedDeck];
+        } else {
+            this.currentDeck = this.decks.default || [];
+            this.currentDeckName = 'default';
+        }
+        
         this.updateDeckSelector();
     }
 
