@@ -18,6 +18,7 @@ class MTGDeckBuilder {
         this.updateFiltersCount();
         this.toggleSubtypeFilter(); // Initialize subtype filter state
         this.toggleLandSubtypeFilter(); // Initialize land subtype filter state
+        this.toggleColorFilter(); // Initialize color filter state
     }
 
     setupEventListeners() {
@@ -32,6 +33,7 @@ class MTGDeckBuilder {
         document.getElementById('type-filter').addEventListener('change', () => {
             this.toggleSubtypeFilter();
             this.toggleLandSubtypeFilter();
+            this.toggleColorFilter();
             this.updateFiltersCount();
             this.searchCards();
         });
@@ -76,6 +78,16 @@ class MTGDeckBuilder {
             this.filterLandSubtypes(e.target.value);
         });
         
+        // Keyword search functionality
+        document.getElementById('keyword-search').addEventListener('input', (e) => {
+            this.filterKeywords(e.target.value);
+        });
+        
+        // Rarity search functionality
+        document.getElementById('rarity-search').addEventListener('input', (e) => {
+            this.filterRarities(e.target.value);
+        });
+        
         document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 this.updateFiltersCount();
@@ -101,6 +113,7 @@ class MTGDeckBuilder {
         document.getElementById('new-deck-btn').addEventListener('click', () => this.createNewDeck());
         document.getElementById('deck-selector').addEventListener('change', (e) => this.switchDeck(e.target.value));
         document.getElementById('export-deck-btn').addEventListener('click', () => this.exportDeck());
+        document.getElementById('import-deck-btn').addEventListener('click', () => this.showImportModal());
         document.getElementById('shuffle-btn').addEventListener('click', () => this.shuffleDeck());
         document.getElementById('simulate-hand-btn').addEventListener('click', () => this.simulateHand());
 
@@ -124,6 +137,10 @@ class MTGDeckBuilder {
         document.getElementById('draw-new-hand').addEventListener('click', () => {
             this.simulateHand();
         });
+        
+        // Import modal controls
+        document.getElementById('import-deck-confirm').addEventListener('click', () => this.importDeck());
+        document.getElementById('import-deck-cancel').addEventListener('click', () => this.hideImportModal());
     }
 
     async searchCards() {
@@ -291,7 +308,7 @@ class MTGDeckBuilder {
         let count = 0;
         
         if (document.getElementById('type-filter').value) count++;
-        if (document.getElementById('color-filter').value) count++;
+        if (document.getElementById('color-filter').value && !document.getElementById('color-filter').disabled) count++;
         if (document.getElementById('cmc-filter').value) count++;
         
         // Count multi-select filters
@@ -396,6 +413,38 @@ class MTGDeckBuilder {
         });
     }
     
+    filterKeywords(searchTerm) {
+        const options = document.querySelectorAll('#keyword-options .multi-select-option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const span = option.querySelector('span');
+            const text = span.textContent.toLowerCase();
+            
+            if (text.includes(term)) {
+                option.classList.remove('hidden');
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+    }
+    
+    filterRarities(searchTerm) {
+        const options = document.querySelectorAll('#rarity-options .multi-select-option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const span = option.querySelector('span');
+            const text = span.textContent.toLowerCase();
+            
+            if (text.includes(term)) {
+                option.classList.remove('hidden');
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+    }
+    
     toggleLandSubtypeFilter() {
         const typeFilter = document.getElementById('type-filter').value;
         const landSubtypeContainer = document.querySelector('.filter-column:nth-child(6)');
@@ -425,6 +474,25 @@ class MTGDeckBuilder {
             basicLandFilter.checked = false;
             basicLandFilter.disabled = true;
             this.filterLandSubtypes(''); // Show all options
+        }
+    }
+    
+    toggleColorFilter() {
+        const typeFilter = document.getElementById('type-filter').value;
+        const colorFilter = document.getElementById('color-filter');
+        const colorLabel = document.querySelector('label[for="color-filter"]');
+        
+        if (typeFilter === 'land') {
+            // Disable color filter for lands
+            colorFilter.disabled = true;
+            colorFilter.value = '';
+            colorLabel.style.opacity = '0.5';
+            colorLabel.style.pointerEvents = 'none';
+        } else {
+            // Enable color filter for other types
+            colorFilter.disabled = false;
+            colorLabel.style.opacity = '1';
+            colorLabel.style.pointerEvents = 'auto';
         }
     }
 
@@ -458,6 +526,14 @@ class MTGDeckBuilder {
         document.getElementById('land-subtype-search').value = '';
         this.filterLandSubtypes(''); // Show all options
         
+        // Clear keyword search
+        document.getElementById('keyword-search').value = '';
+        this.filterKeywords(''); // Show all options
+        
+        // Clear rarity search
+        document.getElementById('rarity-search').value = '';
+        this.filterRarities(''); // Show all options
+        
         document.getElementById('format-filter').value = '';
         document.getElementById('legendary-filter').checked = false;
         document.getElementById('basic-land-filter').checked = false;
@@ -465,6 +541,7 @@ class MTGDeckBuilder {
         // Reset filter states
         this.toggleSubtypeFilter();
         this.toggleLandSubtypeFilter();
+        this.toggleColorFilter();
         
         this.updateFiltersCount();
         this.searchCards();
@@ -941,6 +1018,88 @@ class MTGDeckBuilder {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    showImportModal() {
+        document.getElementById('import-modal').classList.remove('hidden');
+        document.getElementById('import-textarea').value = '';
+        document.getElementById('import-textarea').focus();
+    }
+
+    hideImportModal() {
+        document.getElementById('import-modal').classList.add('hidden');
+    }
+
+    async importDeck() {
+        const decklistText = document.getElementById('import-textarea').value.trim();
+        
+        if (!decklistText) {
+            alert('Cole um decklist válido!');
+            return;
+        }
+
+        try {
+            const lines = decklistText.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+            const importedCards = [];
+            
+            for (const line of lines) {
+                const match = line.match(/^(\d+)\s+(.+)$/);
+                if (match) {
+                    const quantity = parseInt(match[1]);
+                    const cardName = match[2].trim();
+                    
+                    if (quantity > 0 && cardName) {
+                        // Search for the card using Scryfall API
+                        try {
+                            const response = await fetch(`https://api.scryfall.com/cards/search?q="${cardName}"&exact=true`);
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data.data && data.data.length > 0) {
+                                    const card = data.data[0];
+                                    for (let i = 0; i < quantity; i++) {
+                                        importedCards.push({
+                                            ...card,
+                                            quantity: 1
+                                        });
+                                    }
+                                } else {
+                                    console.warn(`Card not found: ${cardName}`);
+                                }
+                            }
+                        } catch (error) {
+                            console.warn(`Error searching for card: ${cardName}`, error);
+                        }
+                    }
+                }
+            }
+
+            if (importedCards.length === 0) {
+                alert('Nenhuma carta válida encontrada no decklist!');
+                return;
+            }
+
+            // Clear current deck and add imported cards
+            this.currentDeck = [];
+            importedCards.forEach(card => {
+                const existingCard = this.currentDeck.find(c => c.id === card.id);
+                if (existingCard) {
+                    existingCard.quantity += 1;
+                } else {
+                    this.currentDeck.push(card);
+                }
+            });
+
+            this.saveDecks();
+            this.updateDeckDisplay();
+            this.updateStats();
+            this.hideImportModal();
+            
+            alert(`Deck importado com sucesso! ${importedCards.length} cartas adicionadas.`);
+            
+        } catch (error) {
+            console.error('Error importing deck:', error);
+            alert('Erro ao importar o deck. Verifique o formato e tente novamente.');
+        }
     }
 
     saveDecks() {

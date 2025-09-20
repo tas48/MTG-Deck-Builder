@@ -23,6 +23,9 @@
                     <button id="export-deck-btn" class="btn btn-secondary">
                         <i class="fas fa-download"></i> Exportar
                     </button>
+                    <button id="import-deck-btn" class="btn btn-secondary">
+                        <i class="fas fa-upload"></i> Importar
+                    </button>
                 </div>
             </div>
         </header>
@@ -118,8 +121,9 @@
                         <div class="filter-column">
                             <div class="filter-group">
                                 <label for="rarity-filter">Rarity:</label>
+                                <input type="text" id="rarity-search" placeholder="Search rarity..." class="subtype-search-input">
                                 <div class="multi-select-container">
-                                    <div class="multi-select-options">
+                                    <div class="multi-select-options" id="rarity-options">
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="common" class="rarity-checkbox">
                                             <span>Common</span>
@@ -473,8 +477,9 @@
                         <div class="filter-column">
                             <div class="filter-group">
                                 <label for="keyword-filter">Keywords:</label>
+                                <input type="text" id="keyword-search" placeholder="Search keyword..." class="subtype-search-input">
                                 <div class="multi-select-container">
-                                    <div class="multi-select-options">
+                                    <div class="multi-select-options" id="keyword-options">
                                         <label class="multi-select-option">
                                             <input type="checkbox" value="flying" class="keyword-checkbox">
                                             <span>Flying</span>
@@ -718,6 +723,24 @@
                 <button id="draw-new-hand" class="btn btn-primary">
                     <i class="fas fa-redo"></i> Nova Mão
                 </button>
+            </div>
+        </div>
+
+        <!-- Import Deck Modal -->
+        <div id="import-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Importar Deck</h3>
+                <p>Cole o decklist no formato abaixo:</p>
+                <textarea id="import-textarea" placeholder="4 Lightning Bolt&#10;2 Llanowar Elves&#10;1 Command Tower&#10;3 Counterspell&#10;1 Jace, the Mind Sculptor" rows="15"></textarea>
+                <div class="modal-buttons">
+                    <button id="import-deck-confirm" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Importar Deck
+                    </button>
+                    <button id="import-deck-cancel" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
             </div>
         </div>
 
