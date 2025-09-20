@@ -9,8 +9,11 @@ Um aplicativo web completo para construção de decks de Magic: The Gathering, d
 - Integração com a API pública do Scryfall
 - Filtros avançados:
   - Por tipo (Criatura, Terreno, Feitiço, etc.)
-  - Por cor (Branco, Azul, Preto, Vermelho, Verde, Incolor)
+  - Por cor (Branco, Azul, Preto, Vermelho, Verde, Incolor, Guildas)
   - Por custo de mana convertido (CMC)
+  - Por raridade (Comum, Incomum, Rara, Mítica)
+  - Por palavra-chave (Flying, Trample, Deathtouch, etc.)
+  - Por formato (Standard, Modern, Legacy, Commander, etc.)
   - Filtro para cartas lendárias
 - Visualização de cartas com preview ao clicar
 

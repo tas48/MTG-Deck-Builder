@@ -15,20 +15,46 @@ class MTGDeckBuilder {
         this.setupEventListeners();
         this.updateDeckDisplay();
         this.updateStats();
+        this.updateFiltersCount();
     }
 
     setupEventListeners() {
         // Search functionality
         document.getElementById('search-btn').addEventListener('click', () => this.searchCards());
+        document.getElementById('filter-search-btn').addEventListener('click', () => this.searchWithFiltersOnly());
         document.getElementById('search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.searchCards();
         });
 
         // Filters
-        document.getElementById('type-filter').addEventListener('change', () => this.searchCards());
-        document.getElementById('color-filter').addEventListener('change', () => this.searchCards());
-        document.getElementById('cmc-filter').addEventListener('change', () => this.searchCards());
-        document.getElementById('legendary-filter').addEventListener('change', () => this.searchCards());
+        document.getElementById('type-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('color-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('cmc-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('rarity-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('keyword-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('format-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
+        document.getElementById('legendary-filter').addEventListener('change', () => {
+            this.updateFiltersCount();
+            this.searchCards();
+        });
         document.getElementById('clear-filters-btn').addEventListener('click', () => this.clearFilters());
 
         // Deck management
@@ -89,6 +115,35 @@ class MTGDeckBuilder {
         }
     }
 
+    async searchWithFiltersOnly() {
+        const filters = this.buildFilters();
+        if (!filters.trim()) {
+            alert('Selecione pelo menos um filtro para buscar!');
+            return;
+        }
+
+        this.showLoading(true);
+        this.hideNoResults();
+
+        try {
+            const response = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(filters)}`);
+            const data = await response.json();
+
+            if (data.object === 'error') {
+                this.showNoResults();
+                return;
+            }
+
+            this.searchResults = data.data || [];
+            this.displaySearchResults();
+        } catch (error) {
+            console.error('Erro ao buscar cartas:', error);
+            this.showNoResults();
+        } finally {
+            this.showLoading(false);
+        }
+    }
+
     buildFilters() {
         let filters = [];
 
@@ -107,17 +162,65 @@ class MTGDeckBuilder {
             }
         }
 
+        const rarity = document.getElementById('rarity-filter').value;
+        if (rarity) filters.push(`r:${rarity}`);
+
+        const keyword = document.getElementById('keyword-filter').value;
+        if (keyword) filters.push(`keyword:${keyword}`);
+
+        const format = document.getElementById('format-filter').value;
+        if (format) {
+            if (format === 'pauper') {
+                filters.push('r:common');
+            } else {
+                filters.push(`f:${format}`);
+            }
+        }
+
         const legendary = document.getElementById('legendary-filter').checked;
         if (legendary) filters.push('is:legendary');
 
         return filters.join(' ');
     }
 
+    getActiveFiltersCount() {
+        let count = 0;
+        
+        if (document.getElementById('type-filter').value) count++;
+        if (document.getElementById('color-filter').value) count++;
+        if (document.getElementById('cmc-filter').value) count++;
+        if (document.getElementById('rarity-filter').value) count++;
+        if (document.getElementById('keyword-filter').value) count++;
+        if (document.getElementById('format-filter').value) count++;
+        if (document.getElementById('legendary-filter').checked) count++;
+        
+        return count;
+    }
+
+    updateFiltersCount() {
+        const count = this.getActiveFiltersCount();
+        document.getElementById('active-filters-count').textContent = count;
+        
+        // Update button appearance based on active filters
+        const filterBtn = document.getElementById('filter-search-btn');
+        if (count > 0) {
+            filterBtn.style.background = 'linear-gradient(135deg, #444444 0%, #666666 100%)';
+            filterBtn.style.borderColor = '#888888';
+        } else {
+            filterBtn.style.background = '#1a1a1a';
+            filterBtn.style.borderColor = '#444444';
+        }
+    }
+
     clearFilters() {
         document.getElementById('type-filter').value = '';
         document.getElementById('color-filter').value = '';
         document.getElementById('cmc-filter').value = '';
+        document.getElementById('rarity-filter').value = '';
+        document.getElementById('keyword-filter').value = '';
+        document.getElementById('format-filter').value = '';
         document.getElementById('legendary-filter').checked = false;
+        this.updateFiltersCount();
         this.searchCards();
     }
 
@@ -147,15 +250,10 @@ class MTGDeckBuilder {
 
         cardDiv.innerHTML = `
             <img src="${imageUrl}" alt="${card.name}" class="card-image" loading="lazy">
-            <div class="card-info">
-                <div class="card-name">${card.name}</div>
-                <div class="card-type">${card.type_line}</div>
-                <div class="card-cmc">
-                    <span class="cmc-cost">${card.mana_cost || card.cmc}</span>
-                    <button class="add-to-deck" onclick="event.stopPropagation(); deckBuilder.addToDeck('${card.id}')">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
+            <div class="card-overlay">
+                <button class="add-to-deck-overlay" onclick="event.stopPropagation(); deckBuilder.addToDeck('${card.id}')">
+                    <i class="fas fa-plus"></i>
+                </button>
             </div>
         `;
 
