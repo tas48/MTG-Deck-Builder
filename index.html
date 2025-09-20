@@ -735,8 +735,15 @@
                 <!-- Deck Section -->
                 <section class="deck-section">
                     <div class="deck-header">
-                        <h2>Meu Deck (<span id="deck-count">0</span> cartas)</h2>
+                        <h2>Meu Deck (<span id="deck-count">0</span>)</h2>
                         <div class="deck-actions">
+                            <div class="search-input-group">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" id="deck-search" placeholder="Buscar..." class="deck-search-input">
+                                <button id="clear-deck-search" class="clear-search-btn" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                             <button id="shuffle-btn" class="btn btn-secondary">
                                 <i class="fas fa-random"></i> Embaralhar
                             </button>

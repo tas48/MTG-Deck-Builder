@@ -146,6 +146,8 @@ class MTGDeckBuilder {
         document.getElementById('import-deck-btn').addEventListener('click', () => this.showImportModal());
         document.getElementById('shuffle-btn').addEventListener('click', () => this.shuffleDeck());
         document.getElementById('simulate-hand-btn').addEventListener('click', () => this.simulateHand());
+        document.getElementById('deck-search').addEventListener('input', (e) => this.filterDeckCards(e.target.value));
+        document.getElementById('clear-deck-search').addEventListener('click', () => this.clearDeckSearch());
 
         // Modal controls
         document.querySelectorAll('.close').forEach(closeBtn => {
@@ -871,23 +873,27 @@ class MTGDeckBuilder {
                         'https://via.placeholder.com/60x84?text=No+Image';
 
         cardDiv.innerHTML = `
-            <img src="${imageUrl}" alt="${card.name}" class="deck-card-image"
-                 onmouseenter="deckBuilder.showCardPreview(event, '${card.id}')"
-                 onmouseleave="deckBuilder.hideCardPreview()"
-                 onmousemove="deckBuilder.updateCardPreviewPosition(event)">
-            <div class="deck-card-info">
-                <div class="deck-card-name">${card.name}</div>
-                <div class="deck-card-type">${card.type_line}</div>
+            <div class="deck-card-image-container">
+                <img src="${imageUrl}" alt="${card.name}" class="deck-card-image"
+                     onmouseenter="deckBuilder.showCardPreview(event, '${card.id}')"
+                     onmouseleave="deckBuilder.hideCardPreview()"
+                     onmousemove="deckBuilder.updateCardPreviewPosition(event)">
             </div>
-            <div class="deck-card-controls">
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="deckBuilder.removeFromDeck('${card.id}')" ${card.quantity <= 1 ? 'disabled' : ''}>-</button>
-                    <span class="quantity">${card.quantity}</span>
-                    <button class="quantity-btn" onclick="deckBuilder.addToDeck('${card.id}')">+</button>
+            <div class="deck-card-content">
+                <div class="deck-card-info">
+                    <div class="deck-card-name">${card.name}</div>
+                    <div class="deck-card-type">${card.type_line}</div>
                 </div>
-                <button class="remove-card" onclick="deckBuilder.removeFromDeck('${card.id}')">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="deck-card-controls">
+                    <div class="quantity-control">
+                        <button class="quantity-btn" onclick="deckBuilder.removeFromDeck('${card.id}')" ${card.quantity <= 1 ? 'disabled' : ''}>-</button>
+                        <span class="quantity">${card.quantity}</span>
+                        <button class="quantity-btn" onclick="deckBuilder.addToDeck('${card.id}')">+</button>
+                    </div>
+                    <button class="remove-card" onclick="deckBuilder.removeFromDeck('${card.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
         `;
 
@@ -993,6 +999,46 @@ class MTGDeckBuilder {
         `;
 
         modal.classList.remove('hidden');
+    }
+
+    filterDeckCards(searchTerm) {
+        const deckCards = document.querySelectorAll('.deck-card');
+        const clearBtn = document.getElementById('clear-deck-search');
+        
+        // Show/hide clear button
+        if (searchTerm.trim()) {
+            clearBtn.style.display = 'block';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+        
+        deckCards.forEach(card => {
+            const cardName = card.querySelector('.deck-card-name').textContent.toLowerCase();
+            const cardType = card.querySelector('.deck-card-type').textContent.toLowerCase();
+            const searchLower = searchTerm.toLowerCase();
+            
+            const matches = cardName.includes(searchLower) || cardType.includes(searchLower);
+            
+            if (matches) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    clearDeckSearch() {
+        const searchInput = document.getElementById('deck-search');
+        const clearBtn = document.getElementById('clear-deck-search');
+        
+        searchInput.value = '';
+        clearBtn.style.display = 'none';
+        
+        // Show all cards
+        const deckCards = document.querySelectorAll('.deck-card');
+        deckCards.forEach(card => {
+            card.style.display = 'block';
+        });
     }
 
     simulateHand() {
