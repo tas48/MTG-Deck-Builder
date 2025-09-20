@@ -798,7 +798,14 @@ class MTGDeckBuilder {
     }
 
     addToDeck(cardId) {
-        const card = this.searchResults.find(c => c.id === cardId);
+        // First try to find the card in the current deck
+        let card = this.currentDeck.find(c => c.id === cardId);
+        
+        // If not found in deck, try to find in search results
+        if (!card) {
+            card = this.searchResults.find(c => c.id === cardId);
+        }
+        
         if (!card) return;
 
         const existingCard = this.currentDeck.find(c => c.id === cardId);
@@ -864,7 +871,10 @@ class MTGDeckBuilder {
                         'https://via.placeholder.com/60x84?text=No+Image';
 
         cardDiv.innerHTML = `
-            <img src="${imageUrl}" alt="${card.name}" class="deck-card-image">
+            <img src="${imageUrl}" alt="${card.name}" class="deck-card-image"
+                 onmouseenter="deckBuilder.showCardPreview(event, '${card.id}')"
+                 onmouseleave="deckBuilder.hideCardPreview()"
+                 onmousemove="deckBuilder.updateCardPreviewPosition(event)">
             <div class="deck-card-info">
                 <div class="deck-card-name">${card.name}</div>
                 <div class="deck-card-type">${card.type_line}</div>
@@ -882,6 +892,75 @@ class MTGDeckBuilder {
         `;
 
         return cardDiv;
+    }
+
+    showCardPreview(event, cardId) {
+        // Find the card in current deck
+        const card = this.currentDeck.find(c => c.id === cardId);
+        if (!card) return;
+
+        // Create or get preview element
+        let preview = document.getElementById('card-preview');
+        if (!preview) {
+            preview = document.createElement('div');
+            preview.id = 'card-preview';
+            preview.className = 'card-preview';
+            document.body.appendChild(preview);
+        }
+
+        // Set card image
+        const imageUrl = card.image_uris?.large || 
+                        card.image_uris?.normal || 
+                        card.card_faces?.[0]?.image_uris?.large ||
+                        card.card_faces?.[0]?.image_uris?.normal || 
+                        'https://via.placeholder.com/488x680?text=No+Image';
+
+        preview.innerHTML = `
+            <div class="card-preview-content">
+                <img src="${imageUrl}" alt="${card.name}" class="card-preview-image">
+                <div class="card-preview-name">${card.name}</div>
+            </div>
+        `;
+
+        // Position the preview
+        this.updateCardPreviewPosition(event);
+        preview.classList.add('visible');
+    }
+
+    hideCardPreview() {
+        const preview = document.getElementById('card-preview');
+        if (preview) {
+            preview.classList.remove('visible');
+        }
+    }
+
+    updateCardPreviewPosition(event) {
+        const preview = document.getElementById('card-preview');
+        if (!preview) return;
+
+        const mouseX = event.clientX;
+        const mouseY = event.clientY;
+        const previewRect = preview.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Calculate position (offset from mouse)
+        let left = mouseX + 20;
+        let top = mouseY - 20;
+
+        // Adjust if preview would go off screen
+        if (left + previewRect.width > viewportWidth) {
+            left = mouseX - previewRect.width - 20;
+        }
+        if (top + previewRect.height > viewportHeight) {
+            top = viewportHeight - previewRect.height - 20;
+        }
+        if (top < 0) {
+            top = 20;
+        }
+
+        preview.style.left = `${left}px`;
+        preview.style.top = `${top}px`;
     }
 
     showCardModal(card) {
@@ -983,16 +1062,24 @@ class MTGDeckBuilder {
 
     updateGeneralStats() {
         const totalCards = this.currentDeck.reduce((total, card) => total + card.quantity, 0);
-        const totalCmc = this.currentDeck.reduce((total, card) => total + (card.cmc * card.quantity), 0);
-        const avgCmc = totalCards > 0 ? (totalCmc / totalCards).toFixed(1) : '0.0';
+        
+        // Calculate CMC excluding lands
+        const nonLandCards = this.currentDeck.filter(card => !card.type_line.toLowerCase().includes('land'));
+        const nonLandTotalCards = nonLandCards.reduce((total, card) => total + card.quantity, 0);
+        const totalCmc = nonLandCards.reduce((total, card) => total + (card.cmc * card.quantity), 0);
+        const avgCmc = nonLandTotalCards > 0 ? (totalCmc / nonLandTotalCards).toFixed(1) : '0.0';
         
         const landCount = this.currentDeck
             .filter(card => card.type_line.toLowerCase().includes('land'))
             .reduce((total, card) => total + card.quantity, 0);
 
+        // Calculate recommended land count: CMC average * 10
+        const recommendedLands = Math.round(parseFloat(avgCmc) * 10);
+
         document.getElementById('total-cards').textContent = totalCards;
         document.getElementById('avg-cmc').textContent = avgCmc;
         document.getElementById('land-count').textContent = landCount;
+        document.getElementById('recommended-lands').textContent = recommendedLands;
     }
 
     updateManaCurveChart() {
@@ -1246,30 +1333,48 @@ class MTGDeckBuilder {
 
     async importDeck() {
         const decklistText = document.getElementById('import-textarea').value.trim();
+        console.log('Import deck called, text:', decklistText);
         
         if (!decklistText) {
             alert('Cole um decklist válido!');
             return;
         }
 
+        // Show loading state
+        const importBtn = document.getElementById('import-deck-confirm');
+        const originalText = importBtn.innerHTML;
+        importBtn.disabled = true;
+        importBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
+
         try {
             const lines = decklistText.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+            console.log('Parsed lines:', lines);
             const importedCards = [];
             
             for (const line of lines) {
                 const match = line.match(/^(\d+)\s+(.+)$/);
+                console.log('Processing line:', line, 'Match:', match);
                 if (match) {
                     const quantity = parseInt(match[1]);
                     const cardName = match[2].trim();
+                    console.log('Found card:', cardName, 'Quantity:', quantity);
                     
                     if (quantity > 0 && cardName) {
                         // Search for the card using Scryfall API
                         try {
-                            const response = await fetch(`https://api.scryfall.com/cards/search?q="${cardName}"&exact=true`);
+                            console.log('Searching for card:', cardName);
+                            const response = await fetch(`https://api.scryfall.com/cards/search?q=!"${cardName}"`);
+                            console.log('API response status:', response.status);
                             if (response.ok) {
                                 const data = await response.json();
+                                console.log('API response data:', data);
                                 if (data.data && data.data.length > 0) {
-                                    const card = data.data[0];
+                                    // Find the exact match or use the first result
+                                    let card = data.data.find(c => c.name.toLowerCase() === cardName.toLowerCase());
+                                    if (!card) {
+                                        card = data.data[0];
+                                    }
+                                    console.log('Found card data:', card.name);
                                     for (let i = 0; i < quantity; i++) {
                                         importedCards.push({
                                             ...card,
@@ -1287,12 +1392,14 @@ class MTGDeckBuilder {
                 }
             }
 
+            console.log('Total imported cards:', importedCards.length);
             if (importedCards.length === 0) {
                 alert('Nenhuma carta válida encontrada no decklist!');
                 return;
             }
 
             // Clear current deck and add imported cards
+            console.log('Clearing current deck and adding imported cards');
             this.currentDeck = [];
             importedCards.forEach(card => {
                 const existingCard = this.currentDeck.find(c => c.id === card.id);
@@ -1303,7 +1410,10 @@ class MTGDeckBuilder {
                 }
             });
 
+            console.log('Final deck after import:', this.currentDeck.length, 'unique cards');
+            console.log('Current deck name:', this.currentDeckName);
             this.saveDecks();
+            console.log('Decks saved, updating display...');
             this.updateDeckDisplay();
             this.updateStats();
             this.hideImportModal();
@@ -1313,6 +1423,10 @@ class MTGDeckBuilder {
         } catch (error) {
             console.error('Error importing deck:', error);
             alert('Erro ao importar o deck. Verifique o formato e tente novamente.');
+        } finally {
+            // Restore button state
+            importBtn.disabled = false;
+            importBtn.innerHTML = originalText;
         }
     }
 
