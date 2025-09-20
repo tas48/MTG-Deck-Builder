@@ -19,6 +19,7 @@ class MTGDeckBuilder {
         this.toggleSubtypeFilter(); // Initialize subtype filter state
         this.toggleLandSubtypeFilter(); // Initialize land subtype filter state
         this.toggleColorFilter(); // Initialize color filter state
+        this.updateSearchPlaceholder(); // Initialize search placeholder
     }
 
     setupEventListeners() {
@@ -27,6 +28,11 @@ class MTGDeckBuilder {
         document.getElementById('filter-search-btn').addEventListener('click', () => this.searchWithFiltersOnly());
         document.getElementById('search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.searchCards();
+        });
+        
+        // Search type selector
+        document.getElementById('search-type').addEventListener('change', () => {
+            this.updateSearchPlaceholder();
         });
 
         // Filters
@@ -143,11 +149,23 @@ class MTGDeckBuilder {
         document.getElementById('import-deck-cancel').addEventListener('click', () => this.hideImportModal());
     }
 
+    updateSearchPlaceholder() {
+        const searchType = document.getElementById('search-type').value;
+        const searchInput = document.getElementById('search-input');
+        
+        if (searchType === 'oracle') {
+            searchInput.placeholder = 'Ex: "draw a card", "destroy target creature", "deal 3 damage"';
+        } else {
+            searchInput.placeholder = 'Search cards...';
+        }
+    }
+
     async searchCards() {
         const query = document.getElementById('search-input').value.trim();
+        const searchType = document.getElementById('search-type').value;
         const filters = this.buildFilters();
         
-        console.log('searchCards chamada - Query:', query, 'Filtros:', filters);
+        console.log('searchCards chamada - Query:', query, 'Tipo:', searchType, 'Filtros:', filters);
         
         // If no query and no filters, don't search
         if (!query && !filters.trim()) {
@@ -155,7 +173,27 @@ class MTGDeckBuilder {
             return;
         }
         
-        const searchQuery = query ? `${query} ${filters}`.trim() : filters;
+        // Build the search query based on type
+        let searchQuery = '';
+        if (query) {
+            if (searchType === 'oracle') {
+                // Use oracle text search
+                searchQuery = `oracle:"${query}"`;
+            } else {
+                // Use regular name search
+                searchQuery = query;
+            }
+        }
+        
+        // Add filters if present
+        if (filters.trim()) {
+            if (searchQuery) {
+                searchQuery = `${searchQuery} ${filters}`.trim();
+            } else {
+                searchQuery = filters;
+            }
+        }
+        
         console.log('Query final:', searchQuery);
 
         this.showLoading(true);
