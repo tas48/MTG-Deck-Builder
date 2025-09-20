@@ -48,6 +48,13 @@ class MTGDeckBuilder {
             });
         });
         
+        document.querySelectorAll('.subtype-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateFiltersCount();
+                this.searchCards();
+            });
+        });
+        
         document.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 this.updateFiltersCount();
@@ -189,6 +196,17 @@ class MTGDeckBuilder {
             }
         }
 
+        // Multi-select subtypes
+        const selectedSubtypes = Array.from(document.querySelectorAll('.subtype-checkbox:checked')).map(cb => cb.value);
+        if (selectedSubtypes.length > 0) {
+            if (selectedSubtypes.length === 1) {
+                filters.push(`t:creature t:${selectedSubtypes[0]}`);
+            } else {
+                const subtypeQuery = selectedSubtypes.map(s => `t:${s}`).join(' OR ');
+                filters.push(`t:creature (${subtypeQuery})`);
+            }
+        }
+
         // Multi-select keywords
         const selectedKeywords = Array.from(document.querySelectorAll('.keyword-checkbox:checked')).map(cb => cb.value);
         if (selectedKeywords.length > 0) {
@@ -228,6 +246,9 @@ class MTGDeckBuilder {
         const selectedRarities = document.querySelectorAll('.rarity-checkbox:checked').length;
         if (selectedRarities > 0) count++;
         
+        const selectedSubtypes = document.querySelectorAll('.subtype-checkbox:checked').length;
+        if (selectedSubtypes > 0) count++;
+        
         const selectedKeywords = document.querySelectorAll('.keyword-checkbox:checked').length;
         if (selectedKeywords > 0) count++;
         
@@ -259,6 +280,10 @@ class MTGDeckBuilder {
         
         // Clear multi-select filters
         document.querySelectorAll('.rarity-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        document.querySelectorAll('.subtype-checkbox').forEach(checkbox => {
             checkbox.checked = false;
         });
         
