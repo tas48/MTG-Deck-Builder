@@ -147,6 +147,7 @@ class MTGDeckBuilder {
         document.getElementById('import-deck-btn').addEventListener('click', () => this.showImportModal());
         document.getElementById('shuffle-btn').addEventListener('click', () => this.shuffleDeck());
         document.getElementById('simulate-hand-btn').addEventListener('click', () => this.simulateHand());
+        document.getElementById('view-deck-btn').addEventListener('click', () => this.viewDeck());
         document.getElementById('deck-search').addEventListener('input', (e) => this.filterDeckCards(e.target.value));
         document.getElementById('clear-deck-search').addEventListener('click', () => this.clearDeckSearch());
 
@@ -790,12 +791,23 @@ class MTGDeckBuilder {
         cardDiv.className = 'card';
         cardDiv.addEventListener('click', () => this.showCardModal(card));
 
-        const imageUrl = card.image_uris?.normal || 
-                        card.card_faces?.[0]?.image_uris?.normal || 
-                        'https://via.placeholder.com/200x280?text=No+Image';
+        // Improved image URL logic with better fallbacks
+        let imageUrl = '';
+        if (card.image_uris?.normal) {
+            imageUrl = card.image_uris.normal;
+        } else if (card.image_uris?.small) {
+            imageUrl = card.image_uris.small;
+        } else if (card.card_faces?.[0]?.image_uris?.normal) {
+            imageUrl = card.card_faces[0].image_uris.normal;
+        } else if (card.card_faces?.[0]?.image_uris?.small) {
+            imageUrl = card.card_faces[0].image_uris.small;
+        } else {
+            imageUrl = 'https://via.placeholder.com/200x280/1a1a1a/888888?text=No+Image';
+        }
 
         cardDiv.innerHTML = `
-            <img src="${imageUrl}" alt="${card.name}" class="card-image" loading="lazy">
+            <img src="${imageUrl}" alt="${card.name}" class="card-image" loading="lazy" 
+                 onerror="this.src='https://via.placeholder.com/200x280/1a1a1a/888888?text=No+Image'">
             <div class="card-overlay">
                 <button class="add-to-deck-overlay" onclick="event.stopPropagation(); deckBuilder.addToDeck('${card.id}')">
                     <i class="fas fa-plus"></i>
@@ -875,13 +887,24 @@ class MTGDeckBuilder {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'deck-card';
 
-        const imageUrl = card.image_uris?.normal || 
-                        card.card_faces?.[0]?.image_uris?.normal || 
-                        'https://via.placeholder.com/60x84?text=No+Image';
+        // Improved image URL logic with better fallbacks
+        let imageUrl = '';
+        if (card.image_uris?.normal) {
+            imageUrl = card.image_uris.normal;
+        } else if (card.image_uris?.small) {
+            imageUrl = card.image_uris.small;
+        } else if (card.card_faces?.[0]?.image_uris?.normal) {
+            imageUrl = card.card_faces[0].image_uris.normal;
+        } else if (card.card_faces?.[0]?.image_uris?.small) {
+            imageUrl = card.card_faces[0].image_uris.small;
+        } else {
+            imageUrl = 'https://via.placeholder.com/60x84/1a1a1a/888888?text=No+Image';
+        }
 
         cardDiv.innerHTML = `
             <div class="deck-card-image-container">
                 <img src="${imageUrl}" alt="${card.name}" class="deck-card-image"
+                     onerror="this.src='https://via.placeholder.com/60x84/1a1a1a/888888?text=No+Image'"
                      onmouseenter="deckBuilder.showCardPreview(event, '${card.id}')"
                      onmouseleave="deckBuilder.hideCardPreview()"
                      onmousemove="deckBuilder.updateCardPreviewPosition(event)">
@@ -927,12 +950,19 @@ class MTGDeckBuilder {
             document.body.appendChild(preview);
         }
 
-        // Set card image
-        const imageUrl = card.image_uris?.large || 
-                        card.image_uris?.normal || 
-                        card.card_faces?.[0]?.image_uris?.large ||
-                        card.card_faces?.[0]?.image_uris?.normal || 
-                        'https://via.placeholder.com/488x680?text=No+Image';
+        // Set card image with improved fallbacks
+        let imageUrl = '';
+        if (card.image_uris?.large) {
+            imageUrl = card.image_uris.large;
+        } else if (card.image_uris?.normal) {
+            imageUrl = card.image_uris.normal;
+        } else if (card.card_faces?.[0]?.image_uris?.large) {
+            imageUrl = card.card_faces[0].image_uris.large;
+        } else if (card.card_faces?.[0]?.image_uris?.normal) {
+            imageUrl = card.card_faces[0].image_uris.normal;
+        } else {
+            imageUrl = 'https://via.placeholder.com/488x680/1a1a1a/888888?text=No+Image';
+        }
 
         preview.innerHTML = `
             <div class="card-preview-content">
@@ -986,14 +1016,23 @@ class MTGDeckBuilder {
         const modal = document.getElementById('card-modal');
         const content = document.getElementById('modal-card-content');
 
-        const imageUrl = card.image_uris?.large || 
-                        card.card_faces?.[0]?.image_uris?.large || 
-                        card.image_uris?.normal || 
-                        card.card_faces?.[0]?.image_uris?.normal || 
-                        'https://via.placeholder.com/400x560?text=No+Image';
+        // Improved image URL logic with better fallbacks
+        let imageUrl = '';
+        if (card.image_uris?.large) {
+            imageUrl = card.image_uris.large;
+        } else if (card.image_uris?.normal) {
+            imageUrl = card.image_uris.normal;
+        } else if (card.card_faces?.[0]?.image_uris?.large) {
+            imageUrl = card.card_faces[0].image_uris.large;
+        } else if (card.card_faces?.[0]?.image_uris?.normal) {
+            imageUrl = card.card_faces[0].image_uris.normal;
+        } else {
+            imageUrl = 'https://via.placeholder.com/400x560/1a1a1a/888888?text=No+Image';
+        }
 
         content.innerHTML = `
-            <img src="${imageUrl}" alt="${card.name}" style="max-width: 100%; height: auto; max-height: 300px; border-radius: 8px; margin-bottom: 1rem;">
+            <img src="${imageUrl}" alt="${card.name}" style="max-width: 100%; height: auto; max-height: 300px; border-radius: 8px; margin-bottom: 1rem;"
+                 onerror="this.src='https://via.placeholder.com/400x560/1a1a1a/888888?text=No+Image'">
             <div style="text-align: center;">
                 <h3 style="margin-bottom: 0.5rem; color: #e5e5e5;">${card.name}</h3>
                 <p style="margin-bottom: 0.5rem; color: #888888;"><strong>Tipo:</strong> ${card.type_line}</p>
@@ -1113,6 +1152,22 @@ class MTGDeckBuilder {
         this.saveDecks();
         this.updateDeckDisplay();
         alert('Deck embaralhado!');
+    }
+
+    viewDeck() {
+        if (this.currentDeck.length === 0) {
+            alert('Adicione cartas ao deck primeiro!');
+            return;
+        }
+
+        // Save current deck data to localStorage for the deck view page
+        localStorage.setItem('currentDeckData', JSON.stringify({
+            deckName: this.currentDeckName,
+            cards: this.currentDeck
+        }));
+
+        // Open deck view page in new tab
+        window.open('deck-view.html', '_blank');
     }
 
     updateStats() {

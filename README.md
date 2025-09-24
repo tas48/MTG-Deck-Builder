@@ -25,6 +25,7 @@ Um aplicativo web completo para construção de decks de Magic: The Gathering, d
 - Múltiplos decks (criar, renomear, trocar)
 - **Importar deck** - cole decklists em formato texto
 - **Exportar deck** - baixe decklists em formato .txt
+- **Visualização do deck** - página separada com cartas organizadas por tipo
 - Persistência automática no localStorage
 - Embaralhar deck
 - Simulador de mão inicial (7 cartas aleatórias)

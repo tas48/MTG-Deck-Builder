@@ -415,6 +415,19 @@ body {
     height: 300px;
     object-fit: cover;
     background: #0a0a0a;
+    transition: opacity 0.3s ease;
+}
+
+.card-image.loading {
+    opacity: 0.5;
+    background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .card-overlay {
@@ -591,6 +604,14 @@ body {
     height: 84px;
     object-fit: cover;
     border-radius: 6px;
+    transition: opacity 0.3s ease;
+}
+
+.deck-card-image.loading {
+    opacity: 0.5;
+    background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
 }
 
 .deck-card-content {

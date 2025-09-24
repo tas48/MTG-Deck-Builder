@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização do Deck - MTG Deck Builder</title>
+    <link rel="stylesheet" href="deck-view.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-magic"></i> Visualização do Deck</h1>
+                <div class="header-actions">
+                    <button id="back-btn" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </button>
+                    <button id="print-btn" class="btn btn-primary">
+                        <i class="fas fa-print"></i> Imprimir
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="deck-info">
+                <h2 id="deck-name">Nome do Deck</h2>
+                <div class="deck-stats">
+                    <div class="stat">
+                        <span class="stat-label">Total de Cartas:</span>
+                        <span id="total-cards" class="stat-value">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">CMC Médio:</span>
+                        <span id="avg-cmc" class="stat-value">0.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deck-categories">
+                <!-- Creatures Section -->
+                <section class="category-section" id="creatures-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-dragon"></i> Criaturas
+                        <span class="category-count" id="creatures-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="creatures-grid">
+                        <!-- Creatures will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Lands Section -->
+                <section class="category-section" id="lands-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-mountain"></i> Terrenos
+                        <span class="category-count" id="lands-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="lands-grid">
+                        <!-- Lands will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Instants Section -->
+                <section class="category-section" id="instants-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-bolt"></i> Instantâneos
+                        <span class="category-count" id="instants-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="instants-grid">
+                        <!-- Instants will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Sorceries Section -->
+                <section class="category-section" id="sorceries-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-scroll"></i> Feitiços
+                        <span class="category-count" id="sorceries-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="sorceries-grid">
+                        <!-- Sorceries will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Enchantments Section -->
+                <section class="category-section" id="enchantments-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-gem"></i> Encantamentos
+                        <span class="category-count" id="enchantments-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="enchantments-grid">
+                        <!-- Enchantments will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Artifacts Section -->
+                <section class="category-section" id="artifacts-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-cog"></i> Artefatos
+                        <span class="category-count" id="artifacts-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="artifacts-grid">
+                        <!-- Artifacts will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Planeswalkers Section -->
+                <section class="category-section" id="planeswalkers-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-star"></i> Planeswalkers
+                        <span class="category-count" id="planeswalkers-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="planeswalkers-grid">
+                        <!-- Planeswalkers will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Other Section -->
+                <section class="category-section" id="other-section">
+                    <h3 class="category-title">
+                        <i class="fas fa-question"></i> Outros
+                        <span class="category-count" id="other-count">0</span>
+                    </h3>
+                    <div class="cards-grid" id="other-grid">
+                        <!-- Other cards will be inserted here -->
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Card Preview Modal -->
+        <div id="card-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-card-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="deck-view.js"></script>
+</body>
+</html>
