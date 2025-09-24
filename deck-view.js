@@ -111,6 +111,35 @@ class DeckViewer {
         });
     }
 
+    calculateDrawProbability(cardQuantity, deckSize, handSize = 7) {
+        // Calculate probability of drawing at least one copy of this card
+        // Using hypergeometric distribution approximation
+        
+        if (deckSize === 0 || cardQuantity === 0) return 0;
+        
+        // For small hands relative to deck size, we can use the approximation:
+        // P(at least one) ≈ 1 - (1 - cardQuantity/deckSize)^handSize
+        const cardProbability = cardQuantity / deckSize;
+        const noCardProbability = Math.pow(1 - cardProbability, handSize);
+        const atLeastOneProbability = 1 - noCardProbability;
+        
+        return Math.min(100, Math.max(0, atLeastOneProbability * 100));
+    }
+
+    calculateTurnProbability(cardQuantity, deckSize, turn) {
+        // Calculate probability of drawing at least one copy by turn X
+        // This includes the initial hand (7 cards) plus draws for each turn
+        const handSize = 7 + (turn - 1);
+        return this.calculateDrawProbability(cardQuantity, deckSize, handSize);
+    }
+
+    getProbabilityClass(probability) {
+        if (probability >= 70) return 'high';
+        if (probability >= 40) return 'medium';
+        if (probability >= 20) return 'low';
+        return 'very-low';
+    }
+
     displayDeck() {
         if (!this.deckData) {
             return;
@@ -119,8 +148,8 @@ class DeckViewer {
         // Update deck name and stats
         document.getElementById('deck-name').textContent = this.deckData.deckName;
         
-        const totalCards = this.deckData.cards.reduce((total, card) => total + card.quantity, 0);
-        document.getElementById('total-cards').textContent = totalCards;
+        this.totalDeckSize = this.deckData.cards.reduce((total, card) => total + card.quantity, 0);
+        document.getElementById('total-cards').textContent = this.totalDeckSize;
 
         // Calculate average CMC (excluding lands)
         const nonLandCards = this.deckData.cards.filter(card => !card.type_line.toLowerCase().includes('land'));
@@ -170,6 +199,11 @@ class DeckViewer {
         cardDiv.className = 'card';
         cardDiv.addEventListener('click', () => this.showCardModal(card));
 
+        // Calculate draw probabilities
+        const initialHandProb = this.calculateDrawProbability(card.quantity, this.totalDeckSize, 7);
+        const turn3Prob = this.calculateTurnProbability(card.quantity, this.totalDeckSize, 3);
+        const turn5Prob = this.calculateTurnProbability(card.quantity, this.totalDeckSize, 5);
+
         // Improved image URL logic with better fallbacks
         let imageUrl = '';
         if (card.image_uris?.normal) {
@@ -191,6 +225,20 @@ class DeckViewer {
                 <div class="card-name">${card.name}</div>
                 <div class="card-type">${card.type_line}</div>
                 <div class="card-quantity">${card.quantity}x</div>
+                <div class="card-probabilities">
+                    <div class="prob-item">
+                        <span class="prob-label">Mão inicial:</span>
+                        <span class="prob-value ${this.getProbabilityClass(initialHandProb)}">${initialHandProb.toFixed(1)}%</span>
+                    </div>
+                    <div class="prob-item">
+                        <span class="prob-label">Turno 3:</span>
+                        <span class="prob-value ${this.getProbabilityClass(turn3Prob)}">${turn3Prob.toFixed(1)}%</span>
+                    </div>
+                    <div class="prob-item">
+                        <span class="prob-label">Turno 5:</span>
+                        <span class="prob-value ${this.getProbabilityClass(turn5Prob)}">${turn5Prob.toFixed(1)}%</span>
+                    </div>
+                </div>
             </div>
         `;
 
@@ -200,6 +248,12 @@ class DeckViewer {
     showCardModal(card) {
         const modal = document.getElementById('card-modal');
         const content = document.getElementById('modal-card-content');
+
+        // Calculate draw probabilities
+        const initialHandProb = this.calculateDrawProbability(card.quantity, this.totalDeckSize, 7);
+        const turn3Prob = this.calculateTurnProbability(card.quantity, this.totalDeckSize, 3);
+        const turn5Prob = this.calculateTurnProbability(card.quantity, this.totalDeckSize, 5);
+        const turn10Prob = this.calculateTurnProbability(card.quantity, this.totalDeckSize, 10);
 
         // Improved image URL logic with better fallbacks
         let imageUrl = '';
@@ -223,6 +277,29 @@ class DeckViewer {
                 <p style="margin-bottom: 0.5rem; color: #888888;"><strong>Tipo:</strong> ${card.type_line}</p>
                 <p style="margin-bottom: 0.5rem; color: #888888;"><strong>Custo de Mana:</strong> ${card.mana_cost || card.cmc}</p>
                 <p style="margin-bottom: 0.5rem; color: #888888;"><strong>Quantidade no Deck:</strong> ${card.quantity}</p>
+                
+                <div style="background: #1a1a1a; padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid #333;">
+                    <h4 style="color: #e5e5e5; margin-bottom: 0.5rem;">📊 Probabilidades de Compra</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; text-align: left;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #888888;">Mão inicial (7 cartas):</span>
+                            <span style="color: #4CAF50; font-weight: bold;">${initialHandProb.toFixed(1)}%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #888888;">Até turno 3:</span>
+                            <span style="color: #FFC107; font-weight: bold;">${turn3Prob.toFixed(1)}%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #888888;">Até turno 5:</span>
+                            <span style="color: #FF9800; font-weight: bold;">${turn5Prob.toFixed(1)}%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #888888;">Até turno 10:</span>
+                            <span style="color: #F44336; font-weight: bold;">${turn10Prob.toFixed(1)}%</span>
+                        </div>
+                    </div>
+                </div>
+                
                 ${card.oracle_text ? `<p style="margin-bottom: 1rem; color: #888888; font-size: 0.9rem; line-height: 1.4;"><strong>Texto:</strong><br>${card.oracle_text.replace(/\n/g, '<br>')}</p>` : ''}
             </div>
         `;

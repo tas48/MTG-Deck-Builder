@@ -26,6 +26,7 @@ Um aplicativo web completo para construção de decks de Magic: The Gathering, d
 - **Importar deck** - cole decklists em formato texto
 - **Exportar deck** - baixe decklists em formato .txt
 - **Visualização do deck** - página separada com cartas organizadas por tipo
+- **Análise de probabilidades** - porcentagem de chance de tirar cada carta
 - Persistência automática no localStorage
 - Embaralhar deck
 - Simulador de mão inicial (7 cartas aleatórias)
@@ -35,6 +36,11 @@ Um aplicativo web completo para construção de decks de Magic: The Gathering, d
 - **Distribuição de Cores**: Gráfico de pizza com cores das cartas
 - **Tipos de Carta**: Distribuição por tipo (Criaturas, Terrenos, etc.)
 - **Informações Gerais**: CMC médio, total de cartas, contagem de terrenos
+- **Análise de Probabilidades**: Porcentagem de chance de tirar cada carta
+  - **Mão inicial** (7 cartas)
+  - **Até turno 3** (9 cartas)
+  - **Até turno 5** (11 cartas)
+  - **Código de cores** para fácil identificação das probabilidades
 
 ### 🎯 Filtros Especializados por Tipo
 

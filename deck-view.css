@@ -148,6 +148,58 @@ body {
     font-weight: 700;
 }
 
+.probability-legend {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #0a0a0a;
+    border-radius: 8px;
+    border: 1px solid #333333;
+}
+
+.probability-legend h4 {
+    color: #e5e5e5;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #888888;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-color.high {
+    background-color: #4CAF50;
+}
+
+.legend-color.medium {
+    background-color: #FFC107;
+}
+
+.legend-color.low {
+    background-color: #FF9800;
+}
+
+.legend-color.very-low {
+    background-color: #F44336;
+}
+
 /* Deck Categories */
 .deck-categories {
     display: flex;
@@ -273,6 +325,55 @@ body {
     font-size: 0.8rem;
     font-weight: 600;
     display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.card-probabilities {
+    background: #0a0a0a;
+    border-radius: 6px;
+    padding: 0.5rem;
+    border: 1px solid #333333;
+    margin-top: 0.5rem;
+}
+
+.prob-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.prob-item:last-child {
+    margin-bottom: 0;
+}
+
+.prob-label {
+    color: #888888;
+    font-size: 0.7rem;
+}
+
+.prob-value {
+    color: #e5e5e5;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* Color coding for different probability ranges */
+.prob-value.high {
+    color: #4CAF50;
+}
+
+.prob-value.medium {
+    color: #FFC107;
+}
+
+.prob-value.low {
+    color: #FF9800;
+}
+
+.prob-value.very-low {
+    color: #F44336;
 }
 
 /* Modals */
